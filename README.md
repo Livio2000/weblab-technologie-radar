@@ -4,7 +4,7 @@ A prototype project for a SaaS-based technology management tool.
 
 ## Backend
 
-This is a Node.js/Express backend.
+This is a NestJS backend.
 
 ### Setup
 
@@ -20,8 +20,13 @@ This is a Node.js/Express backend.
    npm run start
    ```
 
-3. The server listens on port `3000` (or the port specified in your `PORT` environment variable) and includes a sample route:
-   - **GET /** returns: `Technologie-Radar API is running`.
+3. The server listens on port `3000` (or the port specified in your `PORT` environment variable)
+
+You can also enable hot-reloading for development:
+
+   ```bash
+   npm run start:dev
+   ```
 
 ## Frontend
 
