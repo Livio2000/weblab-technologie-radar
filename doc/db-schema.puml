@@ -1,0 +1,27 @@
+@startuml db-schema
+
+class User {
+    FirstName: string
+    LastName: string
+    Email: string
+    Password: string
+    Role: enum
+}
+
+class Logs {
+    UserId: int
+    LogDate: datetime
+}
+
+class Technologies {
+    Name: string
+    Description: string
+    Category: enum
+    Ring: enum
+    RingReason: string
+    CreatedDate: datetime
+    UpdatedDate: datetime
+    Published: boolean
+}
+
+@enduml
