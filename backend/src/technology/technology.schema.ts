@@ -36,7 +36,7 @@ export class Technology extends Document {
   published: boolean;
 
   @Prop({ type: Date, default: null })
-  publishedDate: Date;
+  publishedDate?: Date | null;
 }
 
 export const TechnologySchema = SchemaFactory.createForClass(Technology);

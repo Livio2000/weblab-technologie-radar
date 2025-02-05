@@ -23,3 +23,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: # DATABASE_USER
       MONGO_INITDB_ROOT_PASSWORD: # DATABASE_PASS
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

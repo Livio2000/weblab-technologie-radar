@@ -14,8 +14,8 @@ async function bootstrap() {
   app.use(helmet());
   app.use(compression());
 
-  await app.listen(process.env.PORT ?? 3000, () => {
-    console.log(`Server is running on http://localhost:${process.env.PORT ?? 3000}`);
+  await app.listen(process.env.PORT ?? 4000, () => {
+    console.log(`Server is running on http://localhost:${process.env.PORT ?? 4000}`);
   });
 }
 bootstrap();
