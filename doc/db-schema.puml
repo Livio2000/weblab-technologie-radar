@@ -8,12 +8,12 @@ class User {
     Role: enum
 }
 
-class Logs {
+class Log {
     UserId: int
     LogDate: datetime
 }
 
-class Technologies {
+class Technology {
     Name: string
     Description: string
     Category: enum
@@ -22,6 +22,7 @@ class Technologies {
     CreatedDate: datetime
     UpdatedDate: datetime
     Published: boolean
+    PublishedDate: datetime
 }
 
 @enduml

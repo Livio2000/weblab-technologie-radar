@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { MongooseModule } from '@nestjs/mongoose'
+import { TechnologyModule } from './technology/technology.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -27,6 +28,7 @@ const ENV = process.env.NODE_ENV;
       pass: process.env.DATABASE_PASS,
       dbName: process.env.DATABASE_NAME,
     }),
+    TechnologyModule
   ],
   controllers: [AppController],
   providers: [AppService],
