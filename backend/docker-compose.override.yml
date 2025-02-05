@@ -1,0 +1,12 @@
+services:
+  app:
+    environment:
+      DATABASE_NAME: TechRadar
+      DATABASE_USER: admin
+      DATABASE_PASS: 123456
+      DATABASE_URI: mongodb://database:27017
+
+  database:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 123456
