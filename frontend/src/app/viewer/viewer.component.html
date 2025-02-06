@@ -1,0 +1,23 @@
+<div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Technology Radar</h1>
+  
+    <ng-container *ngIf="technologies$ | async as categorizedTechnologies">
+      <div *ngFor="let category of getKeys(categorizedTechnologies)" class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-600">{{ category }}</h2>
+  
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+          <div *ngFor="let ring of ['Assess', 'Trial', 'Adopt', 'Hold']" class="bg-gray-100 p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">{{ ring }}</h3>
+            <ul class="mt-2 space-y-2">
+              <li *ngFor="let tech of categorizedTechnologies[category][ring]"
+                  class="bg-white p-3 rounded-lg shadow-md border border-gray-200">
+                <strong class="text-blue-500">{{ tech.name }}</strong>
+                <p class="text-gray-600 text-sm">{{ tech.description }}</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  
