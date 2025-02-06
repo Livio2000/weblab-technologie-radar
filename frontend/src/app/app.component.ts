@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { ViewerComponent } from './viewer/viewer.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ViewerComponent],
+  imports: [NavigationComponent, RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

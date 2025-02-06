@@ -1,0 +1,57 @@
+<div class="max-w-5xl mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Administration</h1>
+  
+  <form (submit)="saveTechnology()" class="bg-gray-100 p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-semibold mb-4">{{ isEditing ? 'Edit Technology' : 'Create New Technology' }}</h2>
+
+    <label class="block text-gray-700 font-medium">Name</label>
+    <input type="text" [(ngModel)]="technologyForm.name" name="name" required class="input-field" />
+
+    <label class="block text-gray-700 font-medium mt-4">Category</label>
+    <select [(ngModel)]="technologyForm.category" name="category" class="input-field">
+      <option value="Techniques">Techniques</option>
+      <option value="Tools">Tools</option>
+      <option value="Platforms">Platforms</option>
+      <option value="Languages & Frameworks">Languages & Frameworks</option>
+    </select>
+
+    <label class="block text-gray-700 font-medium mt-4">Ring</label>
+    <select [(ngModel)]="technologyForm.ring" name="ring" class="input-field">
+      <option value="Assess">Assess</option>
+      <option value="Trial">Trial</option>
+      <option value="Adopt">Adopt</option>
+      <option value="Hold">Hold</option>
+    </select>
+
+    <label class="block text-gray-700 font-medium mt-4">Technology Description</label>
+    <textarea [(ngModel)]="technologyForm.description" name="description" required class="input-field"></textarea>
+
+    <label class="block text-gray-700 font-medium mt-4">Reason for Ring Placement</label>
+    <textarea [(ngModel)]="technologyForm.ringReason" name="ringReason" required class="input-field"></textarea>
+
+    <div class="mt-4">
+      <button type="submit" class="btn-primary">{{ isEditing ? 'Update' : 'Create' }}</button>
+      <button type="button" class="btn-secondary ml-2" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+
+  <h2 class="text-2xl font-semibold mt-8 mb-4">Existing Technologies</h2>
+
+  <div *ngIf="technologies$ | async as technologies">
+    <div *ngFor="let tech of technologies" class="technology-card">
+      <h3 class="text-lg font-bold text-gray-800">{{ tech.name }}</h3>
+      <p class="text-gray-600 text-sm">{{ tech.description }}</p>
+      <p class="text-gray-500"><strong>Category:</strong> {{ tech.category }}</p>
+      <p class="text-gray-500"><strong>Ring:</strong> {{ tech.ring }}</p>
+      <p class="text-gray-500"><strong>Reason:</strong> {{ tech.ringReason }}</p>
+
+      <div class="mt-4 flex space-x-4">
+        <button class="btn-primary" (click)="editTechnology(tech)">Edit</button>
+        <button class="btn-danger" (click)="deleteTechnology(tech._id!)">Delete</button>
+        <button class="btn-secondary" (click)="togglePublish(tech)">
+          {{ tech.published ? 'Unpublish' : 'Publish' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

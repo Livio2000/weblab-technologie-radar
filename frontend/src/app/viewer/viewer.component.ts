@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Technology } from './technology';
+
+interface Technology {
+  name: string;
+  description: string;
+  category: 'Techniques' | 'Tools' | 'Platforms' | 'Languages & Frameworks';
+  ring: 'Assess' | 'Trial' | 'Adopt' | 'Hold';
+  published: boolean;
+}
 
 @Component({
   selector: 'app-viewer',
