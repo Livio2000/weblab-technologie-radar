@@ -16,10 +16,12 @@ export class AuthService {
     return { id: user.id, email: user.email, role: user.role };
   }
 
-  async login(email: string, password: string): Promise<{ token: string }> {
+  async login(email: string, password: string): Promise<{ token: string, role: string, userId: string }> {
     const user = await this.validateUser(email, password);
     const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'defaultSecretKey';
     const token = jwt.sign(user, jwtSecret, { expiresIn: '1h' });
-    return { token };
+    const role = user.role;
+    const userId = user.id;
+    return { token, role, userId };
   }
 }

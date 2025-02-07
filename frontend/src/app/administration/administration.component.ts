@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { UserManagementComponent } from '../user-management/user-management.component';
 
 interface Technology {
   _id?: string;
@@ -14,10 +15,15 @@ interface Technology {
   published: boolean;
 }
 
+interface Log {
+  userId: string;
+  logDate: string;
+}
+
 @Component({
   selector: 'app-administration',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UserManagementComponent],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.css'
 })
@@ -27,13 +33,29 @@ export class AdministrationComponent implements OnInit {
   technologies$: Observable<Technology[]> | null = null;
   technologyForm: Technology = this.resetTechnologyForm();
   isEditing: boolean = false;
+  logs: Log[] = [];
 
   ngOnInit(): void {
     this.loadTechnologies();
+    this.logAdminAccess();
+    this.fetchLogs();
   }
 
   loadTechnologies(): void {
     this.technologies$ = this.http.get<Technology[]>('http://localhost:4000/v1/technologies');
+  }
+
+  private logAdminAccess(): void {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      this.http.post('http://localhost:4000/v1/logs', { userId }).subscribe();
+    }
+  }
+
+  private fetchLogs(): void {
+    this.http.get<Log[]>('http://localhost:4000/v1/logs').subscribe((logs) => {
+      this.logs = logs;
+    });
   }
 
   saveTechnology(): void {

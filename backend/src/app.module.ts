@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { TechnologyModule } from './technology/technology.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { LogModule } from './log/log.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -32,7 +33,8 @@ const ENV = process.env.NODE_ENV;
     }),
     TechnologyModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    LogModule
   ],
   controllers: [AppController],
   providers: [AppService],

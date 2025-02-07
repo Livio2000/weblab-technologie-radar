@@ -55,3 +55,24 @@
     </div>
   </div>
 </div>
+
+<app-user-management></app-user-management>
+
+<div *ngIf="logs.length > 0" class="mt-10">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Access Logs</h2>
+  
+  <table class="min-w-full bg-white border border-gray-300">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="border px-4 py-2 text-left">User ID</th>
+        <th class="border px-4 py-2 text-left">Log Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let log of logs">
+        <td class="border px-4 py-2">{{ log.userId }}</td>
+        <td class="border px-4 py-2">{{ log.logDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -34,3 +34,22 @@
   margin-top: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f3f4f6;
+  text-align: left;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fafb;
+}

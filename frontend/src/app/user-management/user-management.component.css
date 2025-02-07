@@ -1,0 +1,37 @@
+.input-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+  
+  .btn-primary {
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+  }
+  
+  .btn-secondary {
+    background-color: #6b7280;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+  }
+  
+  .btn-danger {
+    background-color: #dc2626;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+  }
+  
+  .user-card {
+    background-color: #f9fafb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
