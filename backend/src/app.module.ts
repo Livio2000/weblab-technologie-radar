@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { MongooseModule } from '@nestjs/mongoose'
 import { TechnologyModule } from './technology/technology.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -28,7 +30,9 @@ const ENV = process.env.NODE_ENV;
       pass: process.env.DATABASE_PASS,
       dbName: process.env.DATABASE_NAME,
     }),
-    TechnologyModule
+    TechnologyModule,
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
