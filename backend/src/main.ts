@@ -1,13 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common'
+import { BadRequestException, ValidationPipe, VersioningType } from '@nestjs/common'
 import helmet from 'helmet'
 import * as compression from 'compression'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({ origin: '*' });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true,
+    forbidNonWhitelisted: true, 
+    transform: true,
+    exceptionFactory: (errors) => {
+      return new BadRequestException(
+        errors.map((err) => ({
+          field: err.property,
+          constraints: err.constraints ? Object.values(err.constraints) : [],
+        }))
+      );
+    }
+  }));
   app.enableVersioning({
     type: VersioningType.URI
   });

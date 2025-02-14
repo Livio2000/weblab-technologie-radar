@@ -12,7 +12,13 @@ import { AuthService } from '../auth.service';
 })
 
 export class NavigationComponent {
+  menuOpen = false;
+
   constructor(private authService: AuthService) {}
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
@@ -22,7 +28,8 @@ export class NavigationComponent {
     return this.authService.isAdmin();
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
+    this.menuOpen = false;
   }
 }

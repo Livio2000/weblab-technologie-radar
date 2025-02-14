@@ -44,6 +44,8 @@ This will:
 - **Build the NestJS backend** and start it in a container.
 - **Start a MongoDB instance** in a separate container.
 - **Expose the backend on port `4000`** and the database on port `27017`.
+- **Create a default admin user** 
+Email: "admin@example.com" Password: "Admin123!"
 
 ##### **Stop the containers**
 ```bash

@@ -1,26 +1,24 @@
-import { IsEnum, IsOptional, IsString, IsBoolean } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
 import { TechnologyCategory, TechnologyRing } from '../technology.schema';
 
 export class UpdateTechnologyDto {
   @IsString()
-  @IsOptional()
-  name?: string;
+  @IsNotEmpty()
+  name: string;
 
   @IsString()
-  @IsOptional()
-  description?: string;
+  @IsNotEmpty()
+  description: string;
 
   @IsEnum(TechnologyCategory)
-  @IsOptional()
-  category?: TechnologyCategory;
+  category: TechnologyCategory;
 
   @IsEnum(TechnologyRing)
-  @IsOptional()
-  ring?: TechnologyRing;
+  ring: TechnologyRing;
 
   @IsString()
-  @IsOptional()
-  ringReason?: string;
+  @IsNotEmpty()
+  ringReason: string;
 
   @IsBoolean()
   @IsOptional()

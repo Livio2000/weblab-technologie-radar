@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import { LogService } from './log.service';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../user/user.schema';
@@ -15,8 +15,8 @@ export class LogController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  async getLogs() {
-    return this.logService.getAllLogs();
+  async getLogs(@Query('take') take?: number) {
+    return this.logService.getAllLogs(take ?? 10);
   }
 
   @Post()

@@ -12,7 +12,7 @@ export class LogService {
     return log.save();
   }
 
-  async getAllLogs(): Promise<Log[]> {
-    return this.logModel.find().exec();
+  async getAllLogs(take: number): Promise<Log[]> {
+    return this.logModel.find().sort({ logDate: -1 }).limit(take).exec();
   }
 }

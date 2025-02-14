@@ -34,6 +34,7 @@ export class AdministrationComponent implements OnInit {
   technologyForm: Technology = this.resetTechnologyForm();
   isEditing: boolean = false;
   logs: Log[] = [];
+  errorMessages: string[] = [];
 
   ngOnInit(): void {
     this.loadTechnologies();
@@ -53,18 +54,49 @@ export class AdministrationComponent implements OnInit {
   }
 
   private fetchLogs(): void {
-    this.http.get<Log[]>('http://localhost:4000/v1/logs').subscribe((logs) => {
+    this.http.get<Log[]>('http://localhost:4000/v1/logs?take=10').subscribe((logs) => {
       this.logs = logs;
     });
   }
 
   saveTechnology(): void {
+    const technologyData = {
+      name: this.technologyForm.name,
+      description: this.technologyForm.description,
+      category: this.technologyForm.category,
+      ring: this.technologyForm.ring,
+      ringReason: this.technologyForm.ringReason,
+      published: this.technologyForm.published,
+    };
+
     if (this.isEditing) {
-      this.http.put(`http://localhost:4000/v1/technologies/${this.technologyForm._id}`, this.technologyForm)
-        .subscribe(() => this.afterSave());
+      console.log(this.technologyForm);
+      this.http.put(`http://localhost:4000/v1/technologies/${this.technologyForm._id}`, technologyData)
+        .subscribe({
+          next: () => {
+            this.errorMessages = [];
+            this.afterSave();
+          },
+          error: (error) => {
+            this.handleApiError(error);
+        }
+      });
     } else {
-      this.http.post('http://localhost:4000/v1/technologies', this.technologyForm)
-        .subscribe(() => this.afterSave());
+      this.http.post('http://localhost:4000/v1/technologies', technologyData)
+      .subscribe({
+        next: () => this.afterSave(),
+        error: (error) => {
+          this.handleApiError(error);
+        }
+      });
+    }
+  }
+
+  private handleApiError(error: any): void {
+    if (error.status === 400 && Array.isArray(error.error.message)) {
+      this.errorMessages = error.error.message.flatMap((err: { constraints: string[] }) => err.constraints);
+    } else {
+      this.errorMessages = ['An unexpected error occurred.'];
     }
   }
 
@@ -81,7 +113,15 @@ export class AdministrationComponent implements OnInit {
   }
 
   togglePublish(technology: Technology): void {
-    const updatedTech = { ...technology, published: !technology.published };
+    const updatedTech = {
+      name: technology.name,
+      description: technology.description,
+      category: technology.category,
+      ring: technology.ring,
+      ringReason: technology.ringReason,
+      published: !technology.published,
+    };
+    
     this.http.put(`http://localhost:4000/v1/technologies/${technology._id}`, updatedTech)
       .subscribe(() => this.loadTechnologies());
   }
@@ -89,6 +129,7 @@ export class AdministrationComponent implements OnInit {
   resetForm(): void {
     this.technologyForm = this.resetTechnologyForm();
     this.isEditing = false;
+    this.errorMessages = [];
   }
 
   private afterSave(): void {
