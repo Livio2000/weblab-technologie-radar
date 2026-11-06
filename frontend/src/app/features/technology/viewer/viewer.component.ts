@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { Technology } from '../technology.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './viewer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './viewer.component.css'
 })
 export class ViewerComponent implements OnInit {

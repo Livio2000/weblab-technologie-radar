@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { LogService } from '../log.service';
@@ -9,6 +9,7 @@ import { UserService } from '../../user/user.service';
   selector: 'app-recent-logs',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './recent-logs.component.html'
 })
 export class RecentLogsComponent implements OnInit {

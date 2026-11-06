@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -8,6 +8,7 @@ import { AuthService } from '../auth/auth.service';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './navigation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './navigation.component.css'
 })
 

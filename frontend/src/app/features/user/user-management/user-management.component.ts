@@ -1,5 +1,5 @@
 
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
@@ -10,6 +10,7 @@ import { RecentLogsComponent } from '../../log/recent-logs/recent-logs.component
   standalone: true,
   imports: [FormsModule, RecentLogsComponent],
   templateUrl: './user-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent implements OnInit {

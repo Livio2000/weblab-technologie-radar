@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -11,6 +11,7 @@ import { Technology } from '../technology.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './administration.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './administration.component.css'
 })
 export class AdministrationComponent implements OnInit {
