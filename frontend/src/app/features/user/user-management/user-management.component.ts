@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
@@ -8,7 +8,7 @@ import { RecentLogsComponent } from '../../log/recent-logs/recent-logs.component
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RecentLogsComponent],
+  imports: [FormsModule, RecentLogsComponent],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css'
 })

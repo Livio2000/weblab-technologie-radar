@@ -1,11 +1,15 @@
 <div class="max-w-5xl mx-auto p-6">
   <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Technologies</h1>
-  <div *ngIf="errorMessages.length > 0" class="error-summary bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-    <strong class="font-bold">Errors:</strong>
-    <ul class="mt-2">
-      <li *ngFor="let error of errorMessages">{{ error }}</li>
-    </ul>
-  </div>
+  @if (errorMessages.length > 0) {
+    <div class="error-summary bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+      <strong class="font-bold">Errors:</strong>
+      <ul class="mt-2">
+        @for (error of errorMessages; track error) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
   <form (submit)="saveTechnology()" class="bg-gray-100 p-6 rounded-lg shadow-md">
     <h2 class="text-xl font-semibold mb-4">{{ isEditing ? 'Edit Technology' : 'Create New Technology' }}</h2>
 
@@ -42,21 +46,24 @@
 
   <h2 class="text-2xl font-semibold mt-8 mb-4">Existing Technologies</h2>
 
-  <div *ngIf="technologies$ | async as technologies">
-    <div *ngFor="let tech of technologies" class="technology-card">
-      <h3 class="text-lg font-bold text-gray-800">{{ tech.name }}</h3>
-      <p class="text-gray-600 text-sm">{{ tech.description }}</p>
-      <p class="text-gray-500"><strong>Category:</strong> {{ tech.category }}</p>
-      <p class="text-gray-500"><strong>Ring:</strong> {{ tech.ring }}</p>
-      <p class="text-gray-500"><strong>Reason:</strong> {{ tech.ringReason }}</p>
-
-      <div class="mt-4 flex space-x-4">
-        <button class="btn-primary" (click)="editTechnology(tech)">Edit</button>
-        <button class="btn-danger" (click)="deleteTechnology(tech._id!)">Delete</button>
-        <button class="btn-secondary" (click)="togglePublish(tech)">
-          {{ tech.published ? 'Unpublish' : 'Publish' }}
-        </button>
-      </div>
+  @if (technologies$ | async; as technologies) {
+    <div>
+      @for (tech of technologies; track tech) {
+        <div class="technology-card">
+          <h3 class="text-lg font-bold text-gray-800">{{ tech.name }}</h3>
+          <p class="text-gray-600 text-sm">{{ tech.description }}</p>
+          <p class="text-gray-500"><strong>Category:</strong> {{ tech.category }}</p>
+          <p class="text-gray-500"><strong>Ring:</strong> {{ tech.ring }}</p>
+          <p class="text-gray-500"><strong>Reason:</strong> {{ tech.ringReason }}</p>
+          <div class="mt-4 flex space-x-4">
+            <button class="btn-primary" (click)="editTechnology(tech)">Edit</button>
+            <button class="btn-danger" (click)="deleteTechnology(tech._id!)">Delete</button>
+            <button class="btn-secondary" (click)="togglePublish(tech)">
+              {{ tech.published ? 'Unpublish' : 'Publish' }}
+            </button>
+          </div>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

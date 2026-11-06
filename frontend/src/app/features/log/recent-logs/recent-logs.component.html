@@ -1,22 +1,25 @@
-<div *ngIf="logs.length > 0" class="mt-10">
-  <h2 class="text-2xl font-bold text-gray-800 mb-4">Access Logs (Last 10)</h2>
-
-  <div class="overflow-x-auto">
-    <table class="min-w-full bg-white border border-gray-300">
-      <thead>
-        <tr class="bg-gray-200">
-          <th class="border px-4 py-2 text-left hidden md:table-cell">User ID</th>
-          <th class="border px-4 py-2 text-left">Email</th>
-          <th class="border px-4 py-2 text-left">Log Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let log of logs">
-          <td class="border px-4 py-2 hidden md:table-cell font-mono text-xs">{{ log.userId }}</td>
-          <td class="border px-4 py-2">{{ getEmail(log.userId) }}</td>
-          <td class="border px-4 py-2 whitespace-nowrap">{{ log.logDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        </tr>
-      </tbody>
-    </table>
+@if (logs.length > 0) {
+  <div class="mt-10">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Access Logs (Last 10)</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border px-4 py-2 text-left hidden md:table-cell">User ID</th>
+            <th class="border px-4 py-2 text-left">Email</th>
+            <th class="border px-4 py-2 text-left">Log Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of logs; track log) {
+            <tr>
+              <td class="border px-4 py-2 hidden md:table-cell font-mono text-xs">{{ log.userId }}</td>
+              <td class="border px-4 py-2">{{ getEmail(log.userId) }}</td>
+              <td class="border px-4 py-2 whitespace-nowrap">{{ log.logDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+}
