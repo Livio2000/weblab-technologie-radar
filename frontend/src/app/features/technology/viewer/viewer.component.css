@@ -1,0 +1,5 @@
+/* Intentionally empty: the template uses global Tailwind utilities,
+   which carry their own @media breakpoints (sm:, lg:).
+   Do NOT hand-write copies of Tailwind classes here — without media
+   queries they apply at every viewport width and override the real
+   responsive rules (the last rule in the file wins). */

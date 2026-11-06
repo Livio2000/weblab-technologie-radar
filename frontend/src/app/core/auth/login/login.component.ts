@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,25 +11,20 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-
 export class LoginComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   email: string = '';
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
-
-  login() {
+  login(): void {
     this.errorMessage = '';
 
-    this.http.post<{ token: string, role: string, userId: string }>('http://localhost:4000/v1/auth/login', {
-      email: this.email,
-      password: this.password
-    }).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('role', response.role);
-        localStorage.setItem('userId', response.userId);
+        this.authService.setCredentials(response);
         this.router.navigate(['/']);
       },
       error: () => {

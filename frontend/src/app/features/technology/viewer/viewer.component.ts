@@ -1,30 +1,23 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-interface Technology {
-  name: string;
-  description: string;
-  category: 'Techniques' | 'Tools' | 'Platforms' | 'Languages & Frameworks';
-  ring: 'Assess' | 'Trial' | 'Adopt' | 'Hold';
-  published: boolean;
-}
+import { TechnologyService } from '../technology.service';
+import { Technology } from '../technology.model';
 
 @Component({
   selector: 'app-viewer',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './viewer.component.html',
-  styleUrls: ['./viewer.component.scss']
+  styleUrl: './viewer.component.css'
 })
 export class ViewerComponent implements OnInit {
-  private http = inject(HttpClient);
+  private technologyService = inject(TechnologyService);
   technologies$: Observable<Record<string, Record<string, Technology[]>>> | null = null;
 
   ngOnInit(): void {
-    this.technologies$ = this.http.get<Technology[]>('http://localhost:4000/v1/technologies').pipe(
+    this.technologies$ = this.technologyService.getTechnologies().pipe(
       map((data) =>
         data
           .filter((tech) => tech.published)

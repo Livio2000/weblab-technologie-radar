@@ -1,0 +1,31 @@
+<nav class="bg-blue-600 text-white p-4 shadow-md">
+  <div class="container mx-auto flex justify-between items-center">
+    <a class="text-lg font-bold" routerLink="/">Technology Radar</a>
+
+    <button class="md:hidden focus:outline-none" (click)="toggleMenu()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+    </button>
+
+    <ul class="hidden md:flex space-x-6">
+      <li><a class="hover:underline" routerLink="/">Viewer</a></li>
+      <li *ngIf="isAdmin()"><a class="hover:underline" routerLink="/technologies">Technologies</a></li>
+      <li *ngIf="isAdmin()"><a class="hover:underline" routerLink="/users">Users</a></li>
+      <li *ngIf="isAuthenticated()">
+        <button class="hover:underline cursor-pointer" (click)="logout()">Logout</button>
+      </li>
+      <li *ngIf="!isAuthenticated()">
+        <a class="hover:underline" routerLink="/login">Login</a>
+      </li>
+    </ul>
+  </div>
+
+  <div [class.hidden]="!menuOpen" class="md:hidden bg-blue-700 p-3 space-y-2">
+    <a class="block hover:underline" routerLink="/" (click)="toggleMenu()">Viewer</a>
+    <a *ngIf="isAdmin()" class="block hover:underline" routerLink="/technologies" (click)="toggleMenu()">Technologies</a>
+    <a *ngIf="isAdmin()" class="block hover:underline" routerLink="/users" (click)="toggleMenu()">Users</a>
+    <button *ngIf="isAuthenticated()" class="block hover:underline cursor-pointer" (click)="logout(); toggleMenu()">Logout</button>
+    <a *ngIf="!isAuthenticated()" class="block hover:underline" routerLink="/login" (click)="toggleMenu()">Login</a>
+  </div>
+</nav>

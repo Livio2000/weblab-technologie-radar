@@ -1,62 +1,41 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserManagementComponent } from '../user-management/user-management.component';
-
-interface Technology {
-  _id?: string;
-  name: string;
-  description: string;
-  category: 'Techniques' | 'Tools' | 'Platforms' | 'Languages & Frameworks';
-  ring: 'Assess' | 'Trial' | 'Adopt' | 'Hold';
-  ringReason: string;
-  published: boolean;
-}
-
-interface Log {
-  userId: string;
-  logDate: string;
-}
+import { TechnologyService } from '../technology.service';
+import { LogService } from '../../log/log.service';
+import { Technology } from '../technology.model';
 
 @Component({
   selector: 'app-administration',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserManagementComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.css'
 })
-
 export class AdministrationComponent implements OnInit {
-  private http = inject(HttpClient);
+  private technologyService = inject(TechnologyService);
+  private logService = inject(LogService);
+
   technologies$: Observable<Technology[]> | null = null;
   technologyForm: Technology = this.resetTechnologyForm();
-  isEditing: boolean = false;
-  logs: Log[] = [];
+  isEditing = false;
   errorMessages: string[] = [];
 
   ngOnInit(): void {
     this.loadTechnologies();
     this.logAdminAccess();
-    this.fetchLogs();
   }
 
   loadTechnologies(): void {
-    this.technologies$ = this.http.get<Technology[]>('http://localhost:4000/v1/technologies');
+    this.technologies$ = this.technologyService.getTechnologies();
   }
 
   private logAdminAccess(): void {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      this.http.post('http://localhost:4000/v1/logs', { userId }).subscribe();
+      this.logService.logAccess(userId).subscribe();
     }
-  }
-
-  private fetchLogs(): void {
-    this.http.get<Log[]>('http://localhost:4000/v1/logs?take=10').subscribe((logs) => {
-      this.logs = logs;
-    });
   }
 
   saveTechnology(): void {
@@ -70,24 +49,17 @@ export class AdministrationComponent implements OnInit {
     };
 
     if (this.isEditing) {
-      console.log(this.technologyForm);
-      this.http.put(`http://localhost:4000/v1/technologies/${this.technologyForm._id}`, technologyData)
-        .subscribe({
-          next: () => {
-            this.errorMessages = [];
-            this.afterSave();
-          },
-          error: (error) => {
-            this.handleApiError(error);
-        }
+      this.technologyService.updateTechnology(this.technologyForm._id!, technologyData).subscribe({
+        next: () => {
+          this.errorMessages = [];
+          this.afterSave();
+        },
+        error: (error) => this.handleApiError(error),
       });
     } else {
-      this.http.post('http://localhost:4000/v1/technologies', technologyData)
-      .subscribe({
+      this.technologyService.createTechnology(technologyData).subscribe({
         next: () => this.afterSave(),
-        error: (error) => {
-          this.handleApiError(error);
-        }
+        error: (error) => this.handleApiError(error),
       });
     }
   }
@@ -106,9 +78,8 @@ export class AdministrationComponent implements OnInit {
   }
 
   deleteTechnology(id: string): void {
-    if (confirm("Are you sure you want to delete this technology?")) {
-      this.http.delete(`http://localhost:4000/v1/technologies/${id}`)
-        .subscribe(() => this.loadTechnologies());
+    if (confirm('Are you sure you want to delete this technology?')) {
+      this.technologyService.deleteTechnology(id).subscribe(() => this.loadTechnologies());
     }
   }
 
@@ -121,8 +92,8 @@ export class AdministrationComponent implements OnInit {
       ringReason: technology.ringReason,
       published: !technology.published,
     };
-    
-    this.http.put(`http://localhost:4000/v1/technologies/${technology._id}`, updatedTech)
+
+    this.technologyService.updateTechnology(technology._id!, updatedTech)
       .subscribe(() => this.loadTechnologies());
   }
 
