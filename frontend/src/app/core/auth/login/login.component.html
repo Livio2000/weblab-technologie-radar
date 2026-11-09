@@ -4,16 +4,16 @@
   <form (submit)="login()" class="space-y-4">
     <div>
       <label class="block text-gray-700">Email</label>
-      <input type="email" [(ngModel)]="email" name="email" required class="input-field" />
+      <input type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required class="input-field" />
     </div>
 
     <div>
       <label class="block text-gray-700">Password</label>
-      <input type="password" [(ngModel)]="password" name="password" required class="input-field" />
+      <input type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required class="input-field" />
     </div>
 
-    @if (errorMessage) {
-      <p class="text-red-500 text-sm">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="text-red-500 text-sm">{{ errorMessage() }}</p>
     }
 
     <button type="submit" class="btn-primary w-full">Login</button>

@@ -1,5 +1,5 @@
 
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
@@ -9,27 +9,26 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  email: string = '';
-  password: string = '';
-  errorMessage: string = '';
+  email = signal('');
+  password = signal('');
+  errorMessage = signal('');
 
   login(): void {
-    this.errorMessage = '';
+    this.errorMessage.set('');
 
-    this.authService.login(this.email, this.password).subscribe({
+    this.authService.login(this.email(), this.password()).subscribe({
       next: (response) => {
         this.authService.setCredentials(response);
         this.router.navigate(['/']);
       },
       error: () => {
-        this.errorMessage = 'Invalid email or password';
+        this.errorMessage.set('Invalid email or password');
       }
     });
   }
