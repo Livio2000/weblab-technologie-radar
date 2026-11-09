@@ -1,49 +1,60 @@
-
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../user.service';
-import { User } from '../user.model';
+import { User, UserRole } from '../user.model';
 import { RecentLogsComponent } from '../../log/recent-logs/recent-logs.component';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [FormsModule, RecentLogsComponent],
+  imports: [ReactiveFormsModule, RecentLogsComponent],
   templateUrl: './user-management.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent implements OnInit {
   private userService = inject(UserService);
+  private destroyRef = inject(DestroyRef);
+  private fb = inject(FormBuilder);
 
-  users: User[] = [];
-  userForm: User = this.resetUserForm();
-  isEditing = false;
-  errorMessages: string[] = [];
+  users = signal<User[]>([]);
+  isEditing = signal(false);
+  editingId = signal<string | null>(null);
+  errorMessages = signal<string[]>([]);
+
+  userForm = this.fb.group({
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    email: ['', Validators.required],
+    password: [''],
+    role: ['Employee'],
+  });
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    this.userService.getUsers().subscribe((users) => {
-      this.users = users;
-    });
+    this.userService.getUsers()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((users) => this.users.set(users));
   }
 
   saveUser(): void {
+    const form = this.userForm.getRawValue() as User;
+
     const requestData: User = {
-      firstName: this.userForm.firstName,
-      lastName: this.userForm.lastName,
-      email: this.userForm.email,
-      role: this.userForm.role,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      role: form.role as UserRole,
     };
-    if (this.userForm.password) {
-      requestData.password = this.userForm.password;
+    if (form.password) {
+      requestData.password = form.password;
     }
 
-    if (this.isEditing) {
-      this.userService.updateUser(this.userForm._id!, requestData).subscribe({
+    if (this.isEditing()) {
+      this.userService.updateUser(this.editingId()!, requestData).subscribe({
         next: () => this.afterSave(),
         error: (error) => this.handleApiError(error),
       });
@@ -57,17 +68,24 @@ export class UserManagementComponent implements OnInit {
 
   private handleApiError(error: any): void {
     if (error.status === 400 && Array.isArray(error.error.message)) {
-      this.errorMessages = error.error.message.flatMap((err: { constraints: string[] }) => err.constraints);
+      this.errorMessages.set(error.error.message.flatMap((err: { constraints: string[] }) => err.constraints));
     } else if (typeof error.error?.message === 'string') {
-      this.errorMessages = [error.error.message];
+      this.errorMessages.set([error.error.message]);
     } else {
-      this.errorMessages = ['An unexpected error occurred.'];
+      this.errorMessages.set(['An unexpected error occurred.']);
     }
   }
 
   editUser(user: User): void {
-    this.userForm = { ...user, password: '' };
-    this.isEditing = true;
+    this.userForm.setValue({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      password: '',
+    })
+    this.editingId.set(user._id!);
+    this.isEditing.set(true);
   }
 
   deleteUser(id: string): void {
@@ -77,18 +95,15 @@ export class UserManagementComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.userForm = this.resetUserForm();
-    this.isEditing = false;
-    this.errorMessages = [];
+    this.userForm.reset();
+    this.editingId.set(null);
+    this.isEditing.set(false);
+    this.errorMessages.set([]);
   }
 
   private afterSave(): void {
-    this.errorMessages = [];
+    this.errorMessages.set([]);
     this.loadUsers();
     this.resetForm();
-  }
-
-  private resetUserForm(): User {
-    return { firstName: '', lastName: '', email: '', role: 'Employee' };
   }
 }
