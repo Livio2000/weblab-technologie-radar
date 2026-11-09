@@ -1,0 +1,15 @@
+{
+  "jest.useJest30": true,
+  "jest.virtualFolders": [
+    {
+      "name": "frontend",
+      "rootPath": "frontend",
+      "jestCommandLine": "npm test --"
+    },
+    {
+      "name": "backend",
+      "rootPath": "backend",
+      "jestCommandLine": "npm test --"
+    }
+  ]
+}

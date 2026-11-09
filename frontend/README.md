@@ -46,9 +46,15 @@ For a complete list of available schematics (such as `components`, `directives`,
 ng generate --help
 ```
 
-## Tests & lint
+## Running unit tests
 
-No test tooling is configured (Karma/Jasmine were removed) and there is no lint script — `ng test` and `ng lint` are intentionally not available.
+Unit tests run with [Jest](https://jestjs.io) via [`jest-preset-angular`](https://thymikee.github.io/jest-preset-angular/) (zoneless setup). Spec files (`src/**/*.spec.ts`) are executed with:
+
+```bash
+npm test
+```
+
+No lint script is configured.
 
 ## Additional Resources
 

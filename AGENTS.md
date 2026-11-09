@@ -29,7 +29,7 @@ Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 
 
 - Angular 22, standalone components, `bootstrapApplication` — no NgModules. Zoneless is the 22 default; the 21→22 migration added `ChangeDetectionStrategy.Eager` to every component as a compatibility shim — drop it per component during the signals work.
 - Structure: `core/` (auth, navigation) and `features/<domain>/` — `technology/` (viewer + administration), `user/` (user-management), `log/` (recent-logs). Each domain folder holds its `*.model.ts` + `*.service.ts` next to its components; API services use `environment.apiUrl` from `src/environments/` (angular.json `fileReplacements` swaps the dev file under `--configuration development`).
-- **No test tooling:** karma/jasmine were removed, zero spec files — there is no `ng test`; don't look for specs. No lint script either.
+- **Frontend tests: Jest 30 + `jest-preset-angular`** (CJS preset, **zoneless** `setupZonelessTestEnv` in `setup-jest.ts`): `npm test` in `frontend/`. Setup files: `jest.config.ts`, `jest-global-mocks.ts`, `tsconfig.spec.json` (`types: ["jest"]` — spec globals need no imports). Specs so far: `core/auth/auth.service.spec.ts`. No lint script.
 - Styling: Tailwind v4 via `@tailwindcss/postcss` (global, `src/styles.css`). **Do not hand-write copies of Tailwind utilities in component CSS** — without media queries they override the real responsive rules (the comment in `viewer.component.css` documents the bug this caused).
 - Build: `ng build` (production is the default configuration), `ng serve` (dev). `dist/` and `.angular/` are gitignored.
 
