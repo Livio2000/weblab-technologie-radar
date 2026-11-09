@@ -19,6 +19,7 @@ export class UserManagementComponent implements OnInit {
   users: User[] = [];
   userForm: User = this.resetUserForm();
   isEditing = false;
+  errorMessages: string[] = [];
 
   ngOnInit(): void {
     this.loadUsers();
@@ -31,18 +32,41 @@ export class UserManagementComponent implements OnInit {
   }
 
   saveUser(): void {
-    const requestData = { ...this.userForm };
-    if (!requestData.password) delete requestData.password;
+    const requestData: User = {
+      firstName: this.userForm.firstName,
+      lastName: this.userForm.lastName,
+      email: this.userForm.email,
+      role: this.userForm.role,
+    };
+    if (this.userForm.password) {
+      requestData.password = this.userForm.password;
+    }
 
     if (this.isEditing) {
-      this.userService.updateUser(this.userForm._id!, requestData).subscribe(() => this.afterSave());
+      this.userService.updateUser(this.userForm._id!, requestData).subscribe({
+        next: () => this.afterSave(),
+        error: (error) => this.handleApiError(error),
+      });
     } else {
-      this.userService.createUser(requestData).subscribe(() => this.afterSave());
+      this.userService.createUser(requestData).subscribe({
+        next: () => this.afterSave(),
+        error: (error) => this.handleApiError(error),
+      });
+    }
+  }
+
+  private handleApiError(error: any): void {
+    if (error.status === 400 && Array.isArray(error.error.message)) {
+      this.errorMessages = error.error.message.flatMap((err: { constraints: string[] }) => err.constraints);
+    } else if (typeof error.error?.message === 'string') {
+      this.errorMessages = [error.error.message];
+    } else {
+      this.errorMessages = ['An unexpected error occurred.'];
     }
   }
 
   editUser(user: User): void {
-    this.userForm = { ...user };
+    this.userForm = { ...user, password: '' };
     this.isEditing = true;
   }
 
@@ -55,9 +79,11 @@ export class UserManagementComponent implements OnInit {
   resetForm(): void {
     this.userForm = this.resetUserForm();
     this.isEditing = false;
+    this.errorMessages = [];
   }
 
   private afterSave(): void {
+    this.errorMessages = [];
     this.loadUsers();
     this.resetForm();
   }
