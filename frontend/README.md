@@ -1,16 +1,36 @@
 # Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
+Web UI for the Technologie-Radar prototype.
+
+Stack: [Angular 22](https://angular.dev) (standalone components), **zoneless** — no `zone.js` — with state driven by **signals** and **reactive forms**, styling via **Tailwind CSS v4**. Package manager: **npm**.
+
+## Prerequisites
+
+- Node.js 22.22.3+, 24.15.0+, or 26+
+- The backend running (see the root README) — development mode expects it at `http://localhost:4000`
 
 ## Development server
 
 To start a local development server, run:
 
 ```bash
+npm install
 ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+The dev server defaults to the `development` configuration, which swaps in `src/environments/environment.development.ts`, pointing the API at `http://localhost:4000/v1`. There is no dev proxy — the backend handles CORS.
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This compiles the project and stores the build artifacts in the `dist/frontend/` directory. The production configuration (the default) optimizes for performance and uses `src/environments/environment.ts`, whose `apiUrl` is the same-origin `/v1` — so a production deploy expects the app to be served from the same host as the API (e.g. behind a reverse proxy).
 
 ## Code scaffolding
 
@@ -26,33 +46,9 @@ For a complete list of available schematics (such as `components`, `directives`,
 ng generate --help
 ```
 
-## Building
+## Tests & lint
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+No test tooling is configured (Karma/Jasmine were removed) and there is no lint script — `ng test` and `ng lint` are intentionally not available.
 
 ## Additional Resources
 

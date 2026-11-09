@@ -21,7 +21,7 @@ Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 
 - **Env loading order matters:** `MongooseModule.forRoot(...)` reads `process.env` when the decorator arguments evaluate; `ConfigModule.forRoot(...)` earlier in the same `imports` array is what loads the `.env` file. Don't reorder/hoist these.
 - In Docker, `NODE_ENV=Production` → looks for nonexistent `.env.Production`; the container relies on the compose env vars instead.
 - `.env` / `.env.development` are **git-tracked** (not ignored).
-- Seeding: `mongo-init.js` creates the admin user (`admin@example.com` / `Admin123!`) **only on a fresh Mongo volume** (`docker compose down -v` to reset). `seed-technologies.js` inserts 33 sample technologies, idempotent; usage instructions are in its header (`docker cp` + `mongosh`).
+- Seeding: `mongo-init.js` creates the admin user (`admin@example.com` / `Admin123!`) **only on a fresh Mongo volume** (`docker compose down -v` to reset).
 - **Nest 12 packages are ESM-only**; the app still compiles to CommonJS and loads them via Node's `require(esm)` (needs Node ≥ 20.19/22.12 — OK here: local Node 26, container `node:23-alpine`). Consequences: no `import * as x` for CJS function-export packages (TS 6 emits `__importStar`, which wraps the function) — use default imports (`import compression from 'compression'`); `esModuleInterop` is on for that reason.
 - Tests: boilerplate only (`src/app.controller.spec.ts`, `test/app.e2e-spec.ts` = `GET /`). `npm test` (unit), `npm run test:e2e`. The jest scripts must keep `node --experimental-vm-modules` (Jest needs it to `require()` the ESM-only Nest 12 packages). The e2e spec closes the app in `afterAll` — without it jest hangs on the open mongoose connection.
 
