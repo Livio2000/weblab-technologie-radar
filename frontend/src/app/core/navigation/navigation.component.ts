@@ -1,5 +1,5 @@
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -8,29 +8,20 @@ import { AuthService } from '../auth/auth.service';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './navigation.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './navigation.component.css'
 })
 
 export class NavigationComponent {
-  menuOpen = false;
+  menuOpen = signal(false);
 
-  constructor(private authService: AuthService) {}
+  constructor(public authService: AuthService) {}
 
   toggleMenu(): void {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
-  }
-
-  isAdmin(): boolean {
-    return this.authService.isAdmin();
+    this.menuOpen.update((state) => !state);
   }
 
   logout(): void {
     this.authService.logout();
-    this.menuOpen = false;
+    this.menuOpen.set(false);
   }
 }

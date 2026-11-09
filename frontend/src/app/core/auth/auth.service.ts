@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,6 +12,10 @@ import { LoginResponse } from './auth.model';
 export class AuthService implements CanActivate {
   private http = inject(HttpClient);
   private router = inject(Router);
+  
+  isAuthenticated = signal(!!localStorage.getItem('token'));
+  userRole = signal(localStorage.getItem('role'));
+  isAdmin = computed(() => this.userRole() === 'Administrator');
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password });
@@ -21,18 +25,9 @@ export class AuthService implements CanActivate {
     localStorage.setItem('token', response.token);
     localStorage.setItem('role', response.role);
     localStorage.setItem('userId', response.userId);
-  }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
-  }
-
-  getUserRole(): string | null {
-    return localStorage.getItem('role');
-  }
-
-  isAdmin(): boolean {
-    return this.getUserRole() === 'Administrator';
+    this.isAuthenticated.set(!!response.token);
+    this.userRole.set(response.role);
   }
 
   canActivate(): boolean {
@@ -46,6 +41,10 @@ export class AuthService implements CanActivate {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+
+    this.isAuthenticated.set(false);
+    this.userRole.set(null);
+
     this.router.navigate(['/login']);
   }
 }
