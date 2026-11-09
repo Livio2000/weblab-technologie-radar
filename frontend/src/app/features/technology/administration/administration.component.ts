@@ -1,7 +1,6 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { TechnologyService } from '../technology.service';
 import { LogService } from '../../log/log.service';
 import { Technology } from '../technology.model';
@@ -9,19 +8,28 @@ import { Technology } from '../technology.model';
 @Component({
   selector: 'app-administration',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './administration.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './administration.component.css'
 })
 export class AdministrationComponent implements OnInit {
   private technologyService = inject(TechnologyService);
   private logService = inject(LogService);
+  private destroyRef = inject(DestroyRef);
+  private fb = inject(FormBuilder);
 
-  technologies$: Observable<Technology[]> | null = null;
-  technologyForm: Technology = this.resetTechnologyForm();
-  isEditing = false;
-  errorMessages: string[] = [];
+  technologies = signal<Technology[]>([]);
+  isEditing = signal(false);
+  editingId = signal<string | null>(null);
+  errorMessages = signal<string[]>([]);
+  technologyForm = this.fb.group({
+    name: ['', Validators.required],
+    description: ['', Validators.required],
+    category: ['Tools'],
+    ring: ['Assess'],
+    ringReason: ['', Validators.required],
+    published: [false],
+  });
 
   ngOnInit(): void {
     this.loadTechnologies();
@@ -29,30 +37,25 @@ export class AdministrationComponent implements OnInit {
   }
 
   loadTechnologies(): void {
-    this.technologies$ = this.technologyService.getTechnologies();
+    this.technologyService.getTechnologies()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((data) => this.technologies.set(data));
   }
 
   private logAdminAccess(): void {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      this.logService.logAccess(userId).subscribe();
+      this.logService.logAccess(userId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
   }
 
   saveTechnology(): void {
-    const technologyData = {
-      name: this.technologyForm.name,
-      description: this.technologyForm.description,
-      category: this.technologyForm.category,
-      ring: this.technologyForm.ring,
-      ringReason: this.technologyForm.ringReason,
-      published: this.technologyForm.published,
-    };
+    const technologyData = this.technologyForm.getRawValue() as Technology;
 
-    if (this.isEditing) {
-      this.technologyService.updateTechnology(this.technologyForm._id!, technologyData).subscribe({
+    if (this.isEditing()) {
+      this.technologyService.updateTechnology(this.editingId()!, technologyData).subscribe({
         next: () => {
-          this.errorMessages = [];
+          this.errorMessages.set([]);
           this.afterSave();
         },
         error: (error) => this.handleApiError(error),
@@ -67,15 +70,23 @@ export class AdministrationComponent implements OnInit {
 
   private handleApiError(error: any): void {
     if (error.status === 400 && Array.isArray(error.error.message)) {
-      this.errorMessages = error.error.message.flatMap((err: { constraints: string[] }) => err.constraints);
+      this.errorMessages.set(error.error.message.flatMap((err: { constraints: string[] }) => err.constraints));
     } else {
-      this.errorMessages = ['An unexpected error occurred.'];
+      this.errorMessages.set(['An unexpected error occurred.']);
     }
   }
 
   editTechnology(technology: Technology): void {
-    this.technologyForm = { ...technology };
-    this.isEditing = true;
+    this.technologyForm.setValue({
+      name: technology.name,
+      description: technology.description,
+      category: technology.category,
+      ring: technology.ring,
+      ringReason: technology.ringReason,
+      published: technology.published
+    });
+    this.editingId.set(technology._id!);
+    this.isEditing.set(true);
   }
 
   deleteTechnology(id: string): void {
@@ -99,24 +110,14 @@ export class AdministrationComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.technologyForm = this.resetTechnologyForm();
-    this.isEditing = false;
-    this.errorMessages = [];
+    this.technologyForm.reset()
+    this.editingId.set(null);
+    this.isEditing.set(false);
+    this.errorMessages.set([]);
   }
 
   private afterSave(): void {
     this.loadTechnologies();
     this.resetForm();
-  }
-
-  private resetTechnologyForm(): Technology {
-    return {
-      name: '',
-      description: '',
-      category: 'Tools',
-      ring: 'Assess',
-      ringReason: '',
-      published: false,
-    };
   }
 }
