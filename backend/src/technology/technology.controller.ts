@@ -6,7 +6,7 @@ import { UpdateTechnologyDto } from './dto/update-technology.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserRole } from '../user/user.schema';
 import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller({
     path: 'technologies', 

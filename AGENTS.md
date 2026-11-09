@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Prototype SaaS "technology radar": NestJS 11 + MongoDB (`backend/`), Angular 19 (`frontend/`). Dev machine is **Windows/PowerShell**. Owner is actively learning Angular — prefer small, reviewable changes with explanation over big rewrites. **Keep responses short** (user preference).
+Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 (`frontend/`). Both on **TypeScript 6**. Dev machine is **Windows/PowerShell**. Owner is actively learning Angular — prefer small, reviewable changes with explanation over big rewrites. **Keep responses short** (user preference).
 
 ## Running the app
 
@@ -11,7 +11,7 @@ Prototype SaaS "technology radar": NestJS 11 + MongoDB (`backend/`), Angular 19 
 ## Package managers
 
 - **Frontend: npm** (`package-lock.json`).
-- **Backend: use npm.** README + Dockerfile both use `npm install`. The `packageManager: yarn` field and `yarn.lock` are scaffolding leftovers — do not run yarn or regenerate `yarn.lock`.
+- **Backend: use npm.** README + Dockerfile both use `npm install`. The `packageManager: yarn` field and `yarn.lock` are scaffolding leftovers — do not run yarn or regenerate `yarn.lock`. Note: `yarn.lock` keeps getting rewritten (2847-line diffs) after npm installs on this machine — if it shows modified in `git status`, revert it with `git checkout -- backend/yarn.lock`.
 
 ## Backend quirks
 
@@ -22,11 +22,12 @@ Prototype SaaS "technology radar": NestJS 11 + MongoDB (`backend/`), Angular 19 
 - In Docker, `NODE_ENV=Production` → looks for nonexistent `.env.Production`; the container relies on the compose env vars instead.
 - `.env` / `.env.development` are **git-tracked** (not ignored).
 - Seeding: `mongo-init.js` creates the admin user (`admin@example.com` / `Admin123!`) **only on a fresh Mongo volume** (`docker compose down -v` to reset). `seed-technologies.js` inserts 33 sample technologies, idempotent; usage instructions are in its header (`docker cp` + `mongosh`).
-- Tests: boilerplate only (`src/app.controller.spec.ts`, `test/app.e2e-spec.ts` = `GET /`). `npm test` (unit), `npm run test:e2e`.
+- **Nest 12 packages are ESM-only**; the app still compiles to CommonJS and loads them via Node's `require(esm)` (needs Node ≥ 20.19/22.12 — OK here: local Node 26, container `node:23-alpine`). Consequences: no `import * as x` for CJS function-export packages (TS 6 emits `__importStar`, which wraps the function) — use default imports (`import compression from 'compression'`); `esModuleInterop` is on for that reason.
+- Tests: boilerplate only (`src/app.controller.spec.ts`, `test/app.e2e-spec.ts` = `GET /`). `npm test` (unit), `npm run test:e2e`. The jest scripts must keep `node --experimental-vm-modules` (Jest needs it to `require()` the ESM-only Nest 12 packages). The e2e spec closes the app in `afterAll` — without it jest hangs on the open mongoose connection.
 
 ## Frontend
 
-- Angular 19, standalone components, `bootstrapApplication` — no NgModules.
+- Angular 22, standalone components, `bootstrapApplication` — no NgModules. Zoneless is the 22 default; the 21→22 migration added `ChangeDetectionStrategy.Eager` to every component as a compatibility shim — drop it per component during the signals work.
 - Structure: `core/` (auth, navigation) and `features/<domain>/` — `technology/` (viewer + administration), `user/` (user-management), `log/` (recent-logs). Each domain folder holds its `*.model.ts` + `*.service.ts` next to its components; API services use `environment.apiUrl` from `src/environments/` (angular.json `fileReplacements` swaps the dev file under `--configuration development`).
 - **No test tooling:** karma/jasmine were removed, zero spec files — there is no `ng test`; don't look for specs. No lint script either.
 - Styling: Tailwind v4 via `@tailwindcss/postcss` (global, `src/styles.css`). **Do not hand-write copies of Tailwind utilities in component CSS** — without media queries they override the real responsive rules (the comment in `viewer.component.css` documents the bug this caused).

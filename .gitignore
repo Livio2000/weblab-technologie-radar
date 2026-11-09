@@ -1,6 +1,7 @@
 #backend
 backend/dist
 backend/node_modules
+backend/tsconfig.build.tsbuildinfo
 
 #frontend
 frontend/node_modules
