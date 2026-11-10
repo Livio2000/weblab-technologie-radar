@@ -1,7 +1,7 @@
 <div class="max-w-5xl mx-auto p-6">
   <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Technologies</h1>
   @if (errorMessages().length > 0) {
-    <div class="error-summary bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+    <div class="error-summary bg-danger-soft border border-danger/30 text-danger px-4 py-3 rounded relative">
       <strong class="font-bold">Errors:</strong>
       <ul class="mt-2">
         @for (error of errorMessages(); track error) {

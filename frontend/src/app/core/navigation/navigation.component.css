@@ -1,5 +1,5 @@
 nav {
-  background-color: #2563eb;
+  background-color: var(--color-nav);
   color: white;
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
