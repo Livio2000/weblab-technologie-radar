@@ -34,8 +34,6 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: "123456"
         ports:
           - 27017:27017
-        # Healthy = authenticated admin user is available (the image creates
-        # it during first-startup initialization, like the local compose setup).
         options: >-
           --health-cmd "mongosh -u admin -p 123456 --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 })'"
           --health-interval 5s
@@ -46,7 +44,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
@@ -73,7 +71,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
