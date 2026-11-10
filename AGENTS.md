@@ -4,7 +4,7 @@ Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 
 
 ## Running the app
 
-- **Backend (Docker, preferred):** `cd backend && docker compose up --build` → API on `:4000`, MongoDB on `:27017` (db `TechRadar`, user `admin` / `123456` — real values come from `docker-compose.override.yml`; the base compose file has them as empty placeholders).
+- **Backend (Docker, preferred):** `cd backend && docker compose up --build` → API on `:4000`, MongoDB on `:27017` (db `TechRadar`, user `admin` / `123456` — real values come from `docker-compose.override.yml`; the base compose file has them as empty placeholders). Mongo image is `mongo:9.0.4` (matches the CI service container); `docker compose down -v` resets the volume and re-runs the seed.
 - **Frontend:** `cd frontend && npm install && ng serve` → `:4200`. Talks to the backend via CORS (`origin: '*'`); no dev proxy.
 - **Backend without Docker:** `npm run start:dev` (needs MongoDB on `:27017`). Env-file selection is in `app.module.ts`: `NODE_ENV` unset → `.env`, set → `.env.${NODE_ENV}` (so local dev with the dev file needs `NODE_ENV=development`).
 
@@ -27,11 +27,29 @@ Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 
 
 ## Frontend
 
-- Angular 22, standalone components, `bootstrapApplication` — no NgModules. Zoneless is the 22 default; the 21→22 migration added `ChangeDetectionStrategy.Eager` to every component as a compatibility shim — drop it per component during the signals work.
-- Structure: `core/` (auth, navigation) and `features/<domain>/` — `technology/` (viewer + administration), `user/` (user-management), `log/` (recent-logs). Each domain folder holds its `*.model.ts` + `*.service.ts` next to its components; API services use `environment.apiUrl` from `src/environments/` (angular.json `fileReplacements` swaps the dev file under `--configuration development`).
+- Angular 22, standalone components, `bootstrapApplication` — no NgModules. **Zoneless + signals, migration complete**: no `zone.js` dependency, no `provideZoneChangeDetection`, no `ChangeDetectionStrategy` shims anywhere.
+- Structure: `core/` (auth, navigation) and `features/<domain>/` — `technology/` (viewer + administration), `user/` (user-management), `log/` (recent-logs), `dashboard/` (gridster dashboard, 5 widgets incl. a Kendo Grid "Technologies" widget; **lazy route** — Kendo JS only loads on `/dashboard`). Each domain folder holds its `*.model.ts` + `*.service.ts` next to its components; API services use `environment.apiUrl` from `src/environments/` (angular.json `fileReplacements` swaps the dev file under `--configuration development`).
 - **Frontend tests: Jest 30 + `jest-preset-angular`** (CJS preset, **zoneless** `setupZonelessTestEnv` in `setup-jest.ts`): `npm test` in `frontend/`. Setup files: `jest.config.ts`, `jest-global-mocks.ts`, `tsconfig.spec.json` (`types: ["jest"]` — spec globals need no imports). Specs so far: `core/auth/auth.service.spec.ts`. No lint script.
 - Styling: Tailwind v4 via `@tailwindcss/postcss` (global, `src/styles.css`). **Do not hand-write copies of Tailwind utilities in component CSS** — without media queries they override the real responsive rules (the comment in `viewer.component.css` documents the bug this caused).
 - Build: `ng build` (production is the default configuration), `ng serve` (dev). `dist/` and `.angular/` are gitignored.
+
+## Kendo UI (dashboard)
+
+- `@progress/kendo-angular-grid@25.3.0` + `@progress/kendo-theme-default@14.9.0` + `@progress/kendo-licensing`. **Commercial** — prototype runs on the free trial: an evaluation banner shows until a license is activated (no functional impact).
+- **License is file-based** (no key in code, nothing to gitignore): `npx kendo-ui-license refresh` (browser login) → key lands in `%AppData%\Telerik\telerik-license.txt` → `npx kendo-ui-license activate`.
+- **Theme:** `@import "@progress/kendo-theme-default/dist/default-main.css";` in `styles.css` (v14 has no root `main.css`). Unlayered, so it beats Tailwind's layers — intended: theme styles the widgets, Tailwind lays out the tiles.
+- **`provideAnimations()`** in `app.config.ts` (`@angular/platform-browser/animations`): Kendo components that use animations (e.g. the grid pager's ActionSheet injects `AnimationBuilder`) require it. Deprecated by Angular (removal planned v23) but still mandatory for Kendo v25.
+- **`@angular/localize`:** Kendo calls the `$localize` global for default UI strings. Provided via `angular.json` `"polyfills": ["@angular/localize/init"]` — a direct `main.ts` import triggers a builder warning. Version must match `@angular/core` exactly.
+- **Grid v25 gotchas:** cell template = `<ng-template kendoGridCellTemplate let-dataItem>` (not the old `*kendoCell`); automatic data processing (paging/sorting/filtering) needs `[kendoGridBinding]`, not `[data]` with a plain array; `pageable` only turns the pager UI on — **`pageSize` is required** for paging; `scrollable` defaults to `'scrollable'` (an inner scroll area needs a height; `'none'` = content-sized).
+- **Gridster:** `angular-gridster2@22`. Layout persists to localStorage (`dashboard-layout`), merged over widget defaults; "Reset layout" clears it. Wrap interactive widget content in `class="gridster-item-content"` (the library's default `ignoreContentClass`) so mousedowns inside the widget don't start a tile drag.
+- **Budgets** in `angular.json`: initial raised to 1.5MB warning / 2MB error (Kendo theme CSS is global, ~300 kB compressed). Kendo JS deferred by the lazy route (dashboard chunk ~3.7 MB raw / ~650 kB transfer; initial ~1.3 MB raw / ~200 kB transfer).
+
+## CI
+
+- `.github/workflows/ci.yml` — push to `main` + every PR; two parallel jobs, both on **Node 24** (Jest needs 24.9+ to `require(esm)` the ESM-only Nest 12 packages — Node 22 fails with ERR_REQUIRE_ESM).
+- **backend:** `npm ci` → `npm run build` → `npm test` → `npm run test:e2e` against a `mongo:9.0.4` service (root user `admin`/`123456` via `MONGO_INITDB_ROOT_*`, auth'd mongosh health check). The workflow's `DATABASE_*` env vars win over `.env` (dotenv never overrides existing env vars).
+- **frontend:** `npm ci` → `npm test` → `npm run build`. `ng` is **not global** on the runner — always `npm run build`.
+- `mongo:8` refuses to start on current GitHub runner kernels (≥ 6.19, SERVER-121912) — hence `mongo:9.0.4` in CI **and** local compose.
 
 ## PowerShell gotchas
 

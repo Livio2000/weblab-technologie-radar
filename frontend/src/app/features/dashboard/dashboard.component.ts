@@ -17,7 +17,7 @@ import { LogService } from '../log/log.service';
 import { Log } from '../log/log.model';
 import { UserService } from '../user/user.service';
 
-type WidgetId = 'totals' | 'rings' | 'categories' | 'technologies' | 'recentlyAdded';
+type WidgetId = 'rings' | 'categories' | 'technologies' | 'recentlyAdded';
 type SavedGeometry = Pick<GridsterItemConfig, 'x' | 'y' | 'cols' | 'rows'>;
 
 interface DashboardWidget extends GridsterItemConfig {
@@ -47,14 +47,6 @@ export class DashboardComponent implements OnInit {
   /** Persisted per-widget geometry (x/y/cols/rows), merged over the defaults below. */
   savedLayout = signal<Partial<Record<WidgetId, SavedGeometry>>>(this.loadLayout());
 
-  totals = computed(() => {
-    const techs = this.technologies();
-    return {
-      count: techs.length,
-      rings: RADAR_RINGS.map((ring) => ({ ring, count: techs.filter((t) => t.ring === ring).length })),
-    };
-  });
-
   ringBars = computed(() => this.toBars(
     RADAR_RINGS.map((ring) => ({
       name: ring,
@@ -79,11 +71,10 @@ export class DashboardComponent implements OnInit {
 
   widgets = computed<DashboardWidget[]>(() => {
     const defaults: DashboardWidget[] = [
-      { id: 'totals', title: 'Totals', x: 0, y: 0, cols: 4, rows: 1 },
-      { id: 'rings', title: 'Ring distribution', x: 0, y: 1, cols: 2, rows: 2 },
-      { id: 'categories', title: 'By category', x: 2, y: 1, cols: 2, rows: 2 },
-      { id: 'technologies', title: 'Technologies', x: 0, y: 3, cols: 4, rows: 2 },
-      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 5, cols: 4, rows: 2 },
+      { id: 'rings', title: 'Ring distribution', x: 0, y: 0, cols: 2, rows: 2 },
+      { id: 'categories', title: 'By category', x: 2, y: 0, cols: 2, rows: 2 },
+      { id: 'technologies', title: 'Technologies', x: 0, y: 2, cols: 4, rows: 5 },
+      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 7, cols: 2, rows: 2 },
     ];
     return defaults.map((w) => ({ ...w, ...this.savedLayout()[w.id] }));
   });
@@ -112,7 +103,7 @@ export class DashboardComponent implements OnInit {
     maxItemCols: 4,
     minItemRows: 1,
     maxItemRows: 6,
-    addEmptyRowsCount: 2,
+    addEmptyRowsCount: 0,
     fixedRowHeight: 150,
     keepFixedHeightInMobile: true,
   };
