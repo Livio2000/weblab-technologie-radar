@@ -1,0 +1,99 @@
+<div class="flex h-[calc(100vh-60px)] flex-col">
+  <div class="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+    <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
+    <button class="text-sm text-gray-500 transition-colors hover:text-gray-700" (click)="resetLayout()">
+      Reset layout
+    </button>
+  </div>
+
+  <div class="min-h-0 flex-1 px-6 py-4">
+    <gridster [options]="options">
+      @for (widget of widgets(); track widget.id) {
+        <gridster-item
+          [item]="widget"
+          (itemChange)="onItemChanged($event.item)"
+          (itemResize)="onItemResized($event.item)">
+          <div class="flex h-full flex-col rounded-lg border border-gray-200 bg-white shadow-sm">
+            <h2 class="border-b border-gray-100 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
+              {{ widget.title }}
+            </h2>
+            <div class="min-h-0 flex-1 overflow-y-auto p-4">
+              @switch (widget.id) {
+                @case ('totals') {
+                  <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+                    <span>
+                      <span class="text-3xl font-bold text-primary-600">{{ totals().count }}</span>
+                      <span class="ml-2 text-sm text-gray-500">technologies</span>
+                    </span>
+                    @for (r of totals().rings; track r.ring) {
+                      <span class="text-sm text-gray-600">
+                        {{ r.ring }}: <strong>{{ r.count }}</strong>
+                      </span>
+                    }
+                  </div>
+                }
+                @case ('rings') {
+                  <ul class="space-y-2">
+                    @for (bar of ringBars(); track bar.name) {
+                      <li>
+                        <div class="flex justify-between text-sm text-gray-600">
+                          <span>{{ bar.name }}</span>
+                          <span>{{ bar.count }}</span>
+                        </div>
+                        <div class="mt-1 h-2 rounded-full bg-gray-100">
+                          <div class="h-2 rounded-full" [ngClass]="ringColors[bar.name]" [style.width.%]="bar.pct"></div>
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                }
+                @case ('categories') {
+                  <ul class="space-y-2">
+                    @for (bar of categoryBars(); track bar.name) {
+                      <li>
+                        <div class="flex justify-between text-sm text-gray-600">
+                          <span>{{ bar.name }}</span>
+                          <span>{{ bar.count }}</span>
+                        </div>
+                        <div class="mt-1 h-2 rounded-full bg-gray-100">
+                          <div class="h-2 rounded-full bg-primary-600" [style.width.%]="bar.pct"></div>
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                }
+                @case ('recentlyAdded') {
+                  <ul class="divide-y divide-gray-100">
+                    @for (tech of recentTechs(); track tech._id) {
+                      <li class="flex justify-between gap-2 py-1.5 text-sm">
+                        <span>
+                          <strong class="text-primary-600">{{ tech.name }}</strong>
+                          <span class="text-gray-400"> · {{ tech.category }}</span>
+                        </span>
+                        <span class="shrink-0 text-gray-400">{{ tech.date | date: 'short' }}</span>
+                      </li>
+                    } @empty {
+                      <li class="py-1.5 text-sm text-gray-400">Nothing published yet.</li>
+                    }
+                  </ul>
+                }
+                @case ('recentActivity') {
+                  <ul class="divide-y divide-gray-100">
+                    @for (log of logs(); track log) {
+                      <li class="flex justify-between gap-2 py-1.5 text-sm">
+                        <span class="text-gray-600">{{ getEmail(log.userId) }} opened the radar</span>
+                        <span class="shrink-0 text-gray-400">{{ log.logDate | date: 'medium' }}</span>
+                      </li>
+                    } @empty {
+                      <li class="py-1.5 text-sm text-gray-400">No recent activity.</li>
+                    }
+                  </ul>
+                }
+              }
+            </div>
+          </div>
+        </gridster-item>
+      }
+    </gridster>
+  </div>
+</div>

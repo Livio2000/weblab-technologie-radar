@@ -1,0 +1,10 @@
+/* The library ships a gray debug background on <gridster> and a white one on
+   <gridster-item>; neutralize both — the widgets style themselves.
+   (Component scope wins over the library's global styles.) */
+gridster {
+  background: transparent;
+}
+
+gridster-item {
+  background: transparent;
+}

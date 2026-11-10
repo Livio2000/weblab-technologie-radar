@@ -1,21 +1,45 @@
 <div class="max-w-5xl mx-auto p-6">
   <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Technology Radar</h1>
 
-  @let categorizedTechnologies = technologies();
-  @for (category of getKeys(categorizedTechnologies); track category) {
+  <div class="flex flex-wrap gap-2 mb-8 justify-center">
+    <button
+      class="px-4 py-1.5 rounded-full text-sm border border-gray-300 transition-colors duration-200 active:scale-95"
+      [class.bg-primary-muted]="selectedCategory() === 'All'"
+      [class.border-primary-muted]="selectedCategory() === 'All'"
+      [class.text-white]="selectedCategory() === 'All'"
+      (click)="selectedCategory.set('All')">
+      All
+    </button>
+    @for (name of categoryNames(); track name) {
+      <button
+        class="px-4 py-1.5 rounded-full text-sm border border-gray-300 transition-colors duration-200 active:scale-95"
+        [class.bg-primary-muted]="selectedCategory() === name"
+        [class.border-primary-muted]="selectedCategory() === name"
+        [class.text-white]="selectedCategory() === name"
+        (click)="selectedCategory.set(name)">
+        {{ name }}
+      </button>
+    }
+  </div>
+
+  @for (category of visibleCategories(); track category.name) {
     <div class="mb-8">
-      <h2 class="text-2xl font-semibold text-blue-600">{{ category }}</h2>
+      <h2 class="text-2xl font-semibold text-primary-600">{{ category.name }}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
-        @for (ring of ['Assess', 'Trial', 'Adopt', 'Hold']; track ring) {
-          <div class="bg-gray-100 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">{{ ring }}</h3>
+        @for (ring of rings; track ring) {
+          <div class="border-l-4 bg-white p-4 rounded-lg shadow-sm" [ngClass]="ringStyles[ring].card">
+            <h3 class="flex items-center gap-2 text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+              <span class="size-2.5 rounded-full" [ngClass]="ringStyles[ring].dot"></span>
+              {{ ring }}
+            </h3>
             <ul class="mt-2 space-y-2">
-              @for (tech of categorizedTechnologies[category][ring]; track tech) {
-                <li
-                  class="bg-white p-3 rounded-lg shadow-md border border-gray-200">
-                  <strong class="text-blue-500">{{ tech.name }}</strong>
+              @for (tech of category.rings[ring]; track tech._id) {
+                <li class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+                  <strong class="text-primary-600">{{ tech.name }}</strong>
                   <p class="text-gray-600 text-sm">{{ tech.description }}</p>
                 </li>
+              } @empty {
+                <li class="text-sm text-gray-400">No technologies in this ring.</li>
               }
             </ul>
           </div>

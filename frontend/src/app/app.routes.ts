@@ -1,6 +1,7 @@
 import { Routes, CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
 import { ViewerComponent } from './features/technology/viewer/viewer.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AdministrationComponent } from './features/technology/administration/administration.component';
 import { UserManagementComponent } from './features/user/user-management/user-management.component';
 import { LoginComponent } from './core/auth/login/login.component';
@@ -17,6 +18,7 @@ const adminGuard: CanActivateFn = () => {
 
 export const routes: Routes = [
   { path: '', component: ViewerComponent, canActivate: [AuthService] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthService] },
   { path: 'technologies', component: AdministrationComponent, canActivate: [adminGuard] },
   { path: 'users', component: UserManagementComponent, canActivate: [adminGuard] },
   { path: 'login', component: LoginComponent },

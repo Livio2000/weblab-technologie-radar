@@ -10,6 +10,9 @@
 
     <ul class="hidden md:flex space-x-6">
       <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/">Viewer</a></li>
+      @if (authService.isAuthenticated()) {
+        <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/dashboard">Dashboard</a></li>
+      }
       @if (authService.isAdmin()) {
         <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/technologies">Technologies</a></li>
       }
@@ -31,6 +34,9 @@
 
   <div [class.hidden]="!menuOpen()" class="md:hidden bg-nav-dark p-3 space-y-2">
     <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/" (click)="toggleMenu()">Viewer</a>
+    @if (authService.isAuthenticated()) {
+      <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/dashboard" (click)="toggleMenu()">Dashboard</a>
+    }
     @if (authService.isAdmin()) {
       <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/technologies" (click)="toggleMenu()">Technologies</a>
     }
