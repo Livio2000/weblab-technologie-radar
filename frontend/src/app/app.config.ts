@@ -3,11 +3,15 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { authInterceptor } from './core/auth/auth-interceptor.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes), 
-    provideHttpClient(withXhr(), withInterceptors([authInterceptor]))
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
+    // Kendo components that use animations (e.g. the grid pager's ActionSheet)
+    // require Angular's animation infrastructure, even in standalone apps.
+    provideAnimations()
   ],
 };

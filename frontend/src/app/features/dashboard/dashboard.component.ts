@@ -10,13 +10,14 @@ import {
 } from 'angular-gridster2';
 import { forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GridModule } from '@progress/kendo-angular-grid';
 import { TechnologyService } from '../technology/technology.service';
 import { Technology, RADAR_RINGS, TECHNOLOGY_CATEGORIES } from '../technology/technology.model';
 import { LogService } from '../log/log.service';
 import { Log } from '../log/log.model';
 import { UserService } from '../user/user.service';
 
-type WidgetId = 'totals' | 'rings' | 'categories' | 'recentlyAdded' | 'recentActivity';
+type WidgetId = 'totals' | 'rings' | 'categories' | 'technologies' | 'recentlyAdded';
 type SavedGeometry = Pick<GridsterItemConfig, 'x' | 'y' | 'cols' | 'rows'>;
 
 interface DashboardWidget extends GridsterItemConfig {
@@ -27,7 +28,7 @@ interface DashboardWidget extends GridsterItemConfig {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [Gridster, GridsterItem, DatePipe, NgClass],
+  imports: [Gridster, GridsterItem, DatePipe, NgClass, GridModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -81,8 +82,8 @@ export class DashboardComponent implements OnInit {
       { id: 'totals', title: 'Totals', x: 0, y: 0, cols: 4, rows: 1 },
       { id: 'rings', title: 'Ring distribution', x: 0, y: 1, cols: 2, rows: 2 },
       { id: 'categories', title: 'By category', x: 2, y: 1, cols: 2, rows: 2 },
-      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 3, cols: 4, rows: 2 },
-      { id: 'recentActivity', title: 'Recent activity', x: 0, y: 5, cols: 4, rows: 2 },
+      { id: 'technologies', title: 'Technologies', x: 0, y: 3, cols: 4, rows: 2 },
+      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 5, cols: 4, rows: 2 },
     ];
     return defaults.map((w) => ({ ...w, ...this.savedLayout()[w.id] }));
   });
