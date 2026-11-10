@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # Test branch: the pipeline runs on pushes here while we iterate.
+    # Flip back to [main] before the MR so the merged pipeline is live.
+    branches: [ci-pipeline]
   pull_request:
 
 concurrency:
@@ -26,7 +28,7 @@ jobs:
       DATABASE_NAME: TechRadar
     services:
       mongodb:
-        image: mongo:8
+        image: mongo:9.0.4
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: "123456"
@@ -82,4 +84,4 @@ jobs:
         run: npm test
 
       - name: Production build
-        run: ng build
+        run: npm run build

@@ -36,7 +36,7 @@ Prototype SaaS "technology radar": NestJS 12 + MongoDB (`backend/`), Angular 22 
 ## PowerShell gotchas
 
 - PowerShell swallows `$` in inline scripts — run mongosh/Node snippets from **files** (`docker cp x.js mongodb:/tmp/ && docker exec mongodb mongosh --file /tmp/x.js`), not via `--eval`.
-- In the `mongo:8` image it's **mongosh**, not legacy mongo shell: cursors need `.toArray()` before `.map()`.
+- In the `mongo:9` image it's **mongosh**, not legacy mongo shell: cursors need `.toArray()` before `.map()`.
 - Quote paths containing spaces.
 
 ## Docs
