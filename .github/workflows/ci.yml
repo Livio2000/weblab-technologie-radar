@@ -2,9 +2,7 @@ name: CI
 
 on:
   push:
-    # Test branch: the pipeline runs on pushes here while we iterate.
-    # Flip back to [main] before the MR so the merged pipeline is live.
-    branches: [ci-pipeline]
+    branches: [main]
   pull_request:
 
 concurrency:
