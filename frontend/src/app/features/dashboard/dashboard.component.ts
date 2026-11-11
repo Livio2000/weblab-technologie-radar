@@ -74,7 +74,7 @@ export class DashboardComponent implements OnInit {
       { id: 'rings', title: 'Ring distribution', x: 0, y: 0, cols: 2, rows: 2 },
       { id: 'categories', title: 'By category', x: 2, y: 0, cols: 2, rows: 2 },
       { id: 'technologies', title: 'Technologies', x: 0, y: 2, cols: 4, rows: 5 },
-      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 7, cols: 2, rows: 2 },
+      { id: 'recentlyAdded', title: 'Recently added', x: 0, y: 7, cols: 4, rows: 2 },
     ];
     return defaults.map((w) => ({ ...w, ...this.savedLayout()[w.id] }));
   });

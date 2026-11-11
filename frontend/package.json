@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "jest --no-cache"
+    "test": "jest --no-cache",
+    "test:coverage": "jest --no-cache --coverage"
   },
   "private": true,
   "dependencies": {
