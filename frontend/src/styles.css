@@ -4,61 +4,59 @@
 /*
  * Design tokens — single source of truth for all app colors.
  *
- * Tailwind v4 turns every --color-* below into:
- *   - utilities:  bg-primary-600, text-danger, border-ring-adopt, ...
- *   - CSS vars:   var(--color-primary-600), usable in component CSS
+ * Palette oriented by the public template Tabler (tabler.io, MIT):
+ *   primary #066fd1, success #2fb344, warning #f59f00, danger #d63939,
+ *   page #f9fafb (gray-50), cards white with #e5e7eb (gray-200) borders,
+ *   light nav with gray-700 links (Tabler's default navbar look).
  *
- * Palette: indigo (brand) + amber (warm complement) + emerald/rose/slate
- * for semantic states. Radar rings map to the semantic colors below.
+ * Tailwind v4 turns every --color-* below into:
+ *   - utilities: bg-primary-600, text-danger, border-ring-adopt, ...
+ *   - CSS vars:  var(--color-primary-600), usable in component CSS
+ *
+ * Scale steps are derived from the anchor with color-mix() — the same
+ * technique Tabler uses for its --tblr-primary tints at runtime.
  */
 @theme {
-  /* Brand — indigo */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
+  /* Brand — Tabler blue */
+  --color-primary: #066fd1;
+  --color-primary-50: color-mix(in srgb, var(--color-primary) 10%, white);
+  --color-primary-100: color-mix(in srgb, var(--color-primary) 20%, white);
+  --color-primary-200: color-mix(in srgb, var(--color-primary) 35%, white);
+  --color-primary-300: color-mix(in srgb, var(--color-primary) 50%, white);
+  --color-primary-400: color-mix(in srgb, var(--color-primary) 70%, white);
+  --color-primary-500: color-mix(in srgb, var(--color-primary) 85%, white);
+  --color-primary-600: var(--color-primary);
+  --color-primary-700: #045db0; /* Tabler's documented link-hover color */
+  --color-primary-800: color-mix(in srgb, var(--color-primary) 70%, black);
+  --color-primary-900: color-mix(in srgb, var(--color-primary) 55%, black);
 
-  /* Accent — amber (complementary warm) */
-  --color-accent-300: #fcd34d;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
-
-  /* Semantic states */
-  --color-success: #059669;
-  --color-success-soft: #d1fae5;
-  --color-warning: #d97706;
-  --color-warning-soft: #fef3c7;
-  --color-danger: #e11d48;
-  --color-danger-dark: #be123c;
-  --color-danger-soft: #ffe4e6;
+  /* Semantic states — Tabler base colors */
+  --color-success: #2fb344;
+  --color-success-soft: color-mix(in srgb, var(--color-success) 12%, white);
+  --color-success-dark: color-mix(in srgb, var(--color-success) 75%, black);
+  --color-warning: #f59f00;
+  --color-warning-soft: color-mix(in srgb, var(--color-warning) 12%, white);
+  --color-warning-dark: color-mix(in srgb, var(--color-warning) 65%, black);
+  --color-danger: #d63939;
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 12%, white);
+  --color-danger-dark: color-mix(in srgb, var(--color-danger) 75%, black);
 
   /* Radar rings (Assess = risky, Trial = experimenting, Adopt = recommended, Hold = wait) */
   --color-ring-assess: var(--color-danger);
   --color-ring-trial: var(--color-warning);
   --color-ring-adopt: var(--color-success);
-  --color-ring-hold: #64748b;
+  --color-ring-hold: var(--color-gray-500);
 
-  /*
-   * Muted variants for large surfaces (nav) and buttons: the same hue mixed
-   * toward slate-900, so it reads calmer while staying on-brand and
-   * keeping white text comfortably readable.
-   */
-  --color-nav: color-mix(in srgb, var(--color-primary-900) 85%, var(--color-slate-900) 15%);
-  --color-nav-dark: color-mix(in srgb, var(--color-primary-900) 70%, var(--color-slate-900) 30%);
-  --color-primary-muted: color-mix(in srgb, var(--color-primary-600) 75%, var(--color-slate-900) 25%);
-  --color-primary-muted-dark: color-mix(in srgb, var(--color-primary-700) 75%, var(--color-slate-900) 25%);
-  --color-danger-muted: color-mix(in srgb, var(--color-danger) 70%, var(--color-slate-900) 30%);
-  --color-danger-muted-dark: color-mix(in srgb, var(--color-danger-dark) 70%, var(--color-slate-900) 30%);
+  /* Badge variants: darker fills so white 12px label text passes WCAG AA
+     (4.5:1). Dots/borders can stay on the lighter ring colors (3:1 rule). */
+  --color-ring-assess-badge: var(--color-danger-dark);
+  --color-ring-trial-badge: var(--color-warning-dark);
+  --color-ring-adopt-badge: var(--color-success-dark);
+  --color-ring-hold-badge: var(--color-gray-600);
 }
 
 ::selection {
-  background-color: var(--color-accent-300);
+  background-color: var(--color-primary-200);
 }
 
 input,
@@ -67,9 +65,15 @@ textarea {
   accent-color: var(--color-primary-600);
 }
 
+/* Tabler page color: gray-50 canvas, white cards with gray-200 borders */
+body {
+  background-color: var(--color-gray-50);
+  color: var(--color-gray-800);
+}
+
 /*
  * Shared buttons (login, technology administration, user management).
- * Global so hover/click behavior is consistent across the app;
+ * Global so hover/active behavior is consistent app-wide;
  * colors come from the @theme tokens above.
  */
 .btn-primary,
@@ -85,13 +89,13 @@ textarea {
 }
 
 .btn-primary {
-  background-color: var(--color-primary-muted);
+  background-color: var(--color-primary-600);
 }
 .btn-primary:hover {
-  background-color: var(--color-primary-muted-dark);
+  background-color: var(--color-primary-700);
 }
 .btn-primary:active {
-  background-color: var(--color-primary-900);
+  background-color: var(--color-primary-800);
   transform: scale(0.97);
 }
 .btn-primary:focus-visible {
@@ -115,10 +119,10 @@ textarea {
 }
 
 .btn-danger {
-  background-color: var(--color-danger-muted);
+  background-color: var(--color-danger);
 }
 .btn-danger:hover {
-  background-color: var(--color-danger-muted-dark);
+  background-color: var(--color-danger-dark);
 }
 .btn-danger:active {
   transform: scale(0.97);

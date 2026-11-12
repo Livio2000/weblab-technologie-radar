@@ -1,6 +1,6 @@
-<nav class="bg-nav text-white p-4 shadow-md">
+<nav class="p-4">
   <div class="container mx-auto flex justify-between items-center">
-    <a class="text-lg font-bold" routerLink="/">Technology Radar</a>
+    <a class="text-lg font-bold text-primary-600" routerLink="/">Technology Radar</a>
 
     <button class="md:hidden focus:outline-none" (click)="toggleMenu()">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -9,45 +9,45 @@
     </button>
 
     <ul class="hidden md:flex space-x-6">
-      <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/">Viewer</a></li>
+      <li><a class="transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/">Viewer</a></li>
       @if (authService.isAuthenticated()) {
-        <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/dashboard">Dashboard</a></li>
+        <li><a class="transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/dashboard">Dashboard</a></li>
       }
       @if (authService.isAdmin()) {
-        <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/technologies">Technologies</a></li>
+        <li><a class="transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/technologies">Technologies</a></li>
       }
       @if (authService.isAdmin()) {
-        <li><a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/users">Users</a></li>
+        <li><a class="transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/users">Users</a></li>
       }
       @if (authService.isAuthenticated()) {
         <li>
-          <button class="transition-colors duration-200 hover:underline cursor-pointer hover:text-accent-300" (click)="logout()">Logout</button>
+          <button class="transition-colors duration-200 hover:underline cursor-pointer hover:text-primary-600" (click)="logout()">Logout</button>
         </li>
       }
       @if (!authService.isAuthenticated()) {
         <li>
-          <a class="transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/login">Login</a>
+          <a class="transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/login">Login</a>
         </li>
       }
     </ul>
   </div>
 
-  <div [class.hidden]="!menuOpen()" class="md:hidden bg-nav-dark p-3 space-y-2">
-    <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/" (click)="toggleMenu()">Viewer</a>
+  <div [class.hidden]="!menuOpen()" class="md:hidden border-t border-gray-200 bg-white p-3 space-y-2">
+    <a class="block transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/" (click)="toggleMenu()">Viewer</a>
     @if (authService.isAuthenticated()) {
-      <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/dashboard" (click)="toggleMenu()">Dashboard</a>
+      <a class="block transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/dashboard" (click)="toggleMenu()">Dashboard</a>
     }
     @if (authService.isAdmin()) {
-      <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/technologies" (click)="toggleMenu()">Technologies</a>
+      <a class="block transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/technologies" (click)="toggleMenu()">Technologies</a>
     }
     @if (authService.isAdmin()) {
-      <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/users" (click)="toggleMenu()">Users</a>
+      <a class="block transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/users" (click)="toggleMenu()">Users</a>
     }
     @if (authService.isAuthenticated()) {
-      <button class="block transition-colors duration-200 hover:underline cursor-pointer hover:text-accent-300" (click)="logout(); toggleMenu()">Logout</button>
+      <button class="block transition-colors duration-200 hover:underline cursor-pointer hover:text-primary-600" (click)="logout(); toggleMenu()">Logout</button>
     }
     @if (!authService.isAuthenticated()) {
-      <a class="block transition-colors duration-200 hover:underline hover:text-accent-300" routerLink="/login" (click)="toggleMenu()">Login</a>
+      <a class="block transition-colors duration-200 hover:underline hover:text-primary-600" routerLink="/login" (click)="toggleMenu()">Login</a>
     }
   </div>
 </nav>

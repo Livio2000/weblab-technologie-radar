@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../user.service';
 import { User, UserRole } from '../user.model';
 import { RecentLogsComponent } from '../../log/recent-logs/recent-logs.component';
@@ -66,7 +67,11 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
-  private handleApiError(error: any): void {
+  private handleApiError(error: unknown): void {
+    if (!(error instanceof HttpErrorResponse)) {
+      this.errorMessages.set(['An unexpected error occurred.']);
+      return;
+    }
     if (error.status === 400 && Array.isArray(error.error.message)) {
       this.errorMessages.set(error.error.message.flatMap((err: { constraints: string[] }) => err.constraints));
     } else if (typeof error.error?.message === 'string') {
@@ -95,7 +100,8 @@ export class UserManagementComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.userForm.reset();
+    // plain reset() sets every control to null, not the constructor values
+    this.userForm.reset({ firstName: '', lastName: '', email: '', password: '', role: 'Employee' });
     this.editingId.set(null);
     this.isEditing.set(false);
     this.errorMessages.set([]);

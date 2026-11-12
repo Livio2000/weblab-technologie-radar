@@ -2,13 +2,13 @@ import { makeEnvironmentProviders } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { HttpClient, HttpErrorResponse, provideHttpClient, withInterceptors } from "@angular/common/http";
-import { Router } from "@angular/router";
 import { authInterceptor } from "./auth-interceptor.service";
+import { AuthService } from "./auth.service";
 
 describe('authInterceptor', () => {
     let http: HttpClient;
     let httpMock: HttpTestingController;
-    const routerMock = { navigate: jest.fn() };
+    const authServiceSpy = { logout: jest.fn() };
 
     beforeEach(() => {
         localStorage.clear();
@@ -16,12 +16,12 @@ describe('authInterceptor', () => {
             providers: [
                 provideHttpClient(withInterceptors([authInterceptor])),
                 makeEnvironmentProviders(provideHttpClientTesting()),
-                { provide: Router, useValue: routerMock },
+                { provide: AuthService, useValue: authServiceSpy },
             ],
         });
         http = TestBed.inject(HttpClient);
         httpMock = TestBed.inject(HttpTestingController);
-        routerMock.navigate.mockClear();
+        authServiceSpy.logout.mockClear();
     });
 
     afterEach(() => {
@@ -46,31 +46,25 @@ describe('authInterceptor', () => {
         req.flush([]);
     });
 
-    it('purges the token and redirect to /login on a 401, then re-throws', () => {
-        localStorage.setItem('token', 'my-token');
-
+    it('logs the user out on a 401, then re-throws', () => {
         const errorSpy = jest.fn();
-        http.get('/v1/technologies').subscribe({ error: errorSpy});
+        http.get('/v1/technologies').subscribe({ error: errorSpy });
 
         const req = httpMock.expectOne('/v1/technologies');
         req.flush(null, { status: 401, statusText: 'Unauthorized' });
 
-        expect(localStorage.getItem('token')).toBeNull();
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+        expect(authServiceSpy.logout).toHaveBeenCalledTimes(1);
         expect(errorSpy).toHaveBeenCalledWith(expect.any(HttpErrorResponse));
     });
 
-    it('leaves the token and route untouched on a non-401 error', () => {
-        localStorage.setItem('token', 'my-token');
-
+    it('leaves the session untouched on a non-401 error', () => {
         const errorSpy = jest.fn();
         http.get('/v1/technologies').subscribe({ error: errorSpy });
 
         const req = httpMock.expectOne('/v1/technologies');
         req.flush(null, { status: 500, statusText: 'Internal Server Error' });
 
-        expect(localStorage.getItem('token')).toBe('my-token');
-        expect(routerMock.navigate).not.toHaveBeenCalled();
+        expect(authServiceSpy.logout).not.toHaveBeenCalled();
         expect(errorSpy).toHaveBeenCalledWith(expect.any(HttpErrorResponse));
     });
 });

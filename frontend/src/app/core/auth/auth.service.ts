@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -30,17 +30,14 @@ export class AuthService implements CanActivate {
     this.userRole.set(response.role);
   }
 
-  canActivate(): boolean {
-    if (!this.isAuthenticated()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-    return true;
+  canActivate(): boolean | UrlTree {
+    return this.isAuthenticated() || this.router.createUrlTree(['/login']);
   }
 
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('userId');
 
     this.isAuthenticated.set(false);
     this.userRole.set(null);

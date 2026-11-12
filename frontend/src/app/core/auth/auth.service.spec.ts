@@ -8,7 +8,8 @@ import { firstValueFrom } from 'rxjs';
 describe('AuthService', () => {
   let authService: AuthService;
   let httpMock: HttpTestingController;
-  const routerMock = { navigate: jest.fn() };
+  const loginTree = {};
+  const routerMock = { navigate: jest.fn(), createUrlTree: jest.fn(() => loginTree) };
 
   beforeEach(() => {
     localStorage.clear();
@@ -21,6 +22,7 @@ describe('AuthService', () => {
     });
     httpMock = TestBed.inject(HttpTestingController);
     routerMock.navigate.mockClear();
+    routerMock.createUrlTree.mockClear();
     authService = TestBed.inject(AuthService);
   });
 
@@ -41,16 +43,16 @@ describe('AuthService', () => {
     expect(resp).toEqual(credentials);
   });
 
-  it('canActivate redirects to /login when unauthenticated', () => {
-    expect(authService.canActivate()).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+  it('returns the /login UrlTree when unauthenticated', () => {
+    expect(authService.canActivate()).toBe(loginTree);
+    expect(routerMock.createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 
-  it('canActivate allows access when authenticated', () => {
+  it('allows access when authenticated', () => {
     authService.setCredentials({ token: 't', role: 'Employee', userId: 'u1' });
 
     expect(authService.canActivate()).toBe(true);
-    expect(routerMock.navigate).not.toHaveBeenCalled();
+    expect(routerMock.createUrlTree).not.toHaveBeenCalled();
   })
 
   it('starts out unauthenticated', () => {
@@ -75,6 +77,9 @@ describe('AuthService', () => {
     authService.logout();
     expect(authService.isAuthenticated()).toBe(false);
     expect(authService.userRole()).toBeNull();
+    expect(localStorage.getItem('token')).toBeNull();
+    expect(localStorage.getItem('role')).toBeNull();
+    expect(localStorage.getItem('userId')).toBeNull();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
   });
 });

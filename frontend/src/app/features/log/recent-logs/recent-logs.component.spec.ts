@@ -30,14 +30,13 @@ describe('RecentLogsComponent', () => {
     fixture = TestBed.createComponent(RecentLogsComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
-    fixture.detectChanges(); // runs ngOnInit → forkJoin fires both requests
+    fixture.detectChanges(); // ngOnInit → forkJoin fires the /logs and /users requests
   });
 
   afterEach(() => {
     httpMock.verify();
   });
 
-  /** Answer the two pending requests from the ngOnInit forkJoin. */
   function flushData(): void {
     httpMock.expectOne((r) => r.url === '/v1/logs').flush(logs);
     httpMock.expectOne('/v1/users').flush(users);
@@ -45,7 +44,7 @@ describe('RecentLogsComponent', () => {
   }
 
   it('renders one row per log with the mapped email', () => {
-    expect(component.logs()).toEqual([]); // nothing rendered before the data lands
+    expect(component.logs()).toEqual([]);
 
     flushData();
 

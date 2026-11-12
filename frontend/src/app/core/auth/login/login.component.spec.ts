@@ -6,11 +6,6 @@ import { LoginComponent } from './login.component';
 import { AuthService } from '../auth.service';
 import { LoginResponse } from '../auth.model';
 
-/**
- * Component tests render the REAL template and drive it like a user would:
- * type into the inputs, submit the form. The real AuthService runs in front,
- * and only the network boundary is faked (HttpTestingController).
- */
 describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let component: LoginComponent;
@@ -33,14 +28,14 @@ describe('LoginComponent', () => {
     authService = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     routerMock.navigate.mockClear();
-    fixture.detectChanges(); // initial render
+    fixture.detectChanges();
   });
 
   afterEach(() => {
     httpMock.verify();
   });
 
-  /** ngModel listens to the DOM 'input' event, so set the value and dispatch it. */
+  /** ngModel only updates on the DOM 'input' event. */
   function setField(selector: string, value: string): void {
     const input = fixture.debugElement.query(By.css(selector)).nativeElement;
     input.value = value;
@@ -48,7 +43,7 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   }
 
-  /** jsdom doesn't run real form submission, so fire the submit event directly. */
+  /** jsdom doesn't perform real form submission. */
   function submitForm(): void {
     const form = fixture.debugElement.query(By.css('form')).nativeElement;
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
@@ -64,7 +59,6 @@ describe('LoginComponent', () => {
     setField('input[name="email"]', 'admin@example.com');
     setField('input[name="password"]', 'Test1234');
 
-    // the ngModel → signal wiring is part of the contract:
     expect(component.email()).toBe('admin@example.com');
     expect(component.password()).toBe('Test1234');
 

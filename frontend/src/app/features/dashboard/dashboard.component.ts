@@ -20,6 +20,11 @@ import { UserService } from '../user/user.service';
 type WidgetId = 'rings' | 'categories' | 'technologies' | 'recentlyAdded';
 type SavedGeometry = Pick<GridsterItemConfig, 'x' | 'y' | 'cols' | 'rows'>;
 
+interface SavedLayout {
+  version: number;
+  items: Partial<Record<WidgetId, SavedGeometry>>;
+}
+
 interface DashboardWidget extends GridsterItemConfig {
   id: WidgetId;
   title: string;
@@ -39,12 +44,13 @@ export class DashboardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   private static readonly STORAGE_KEY = 'dashboard-layout';
+  /** bump when the persisted shape changes — older saved layouts are then discarded */
+  private static readonly LAYOUT_VERSION = 2;
 
   private technologies = signal<Technology[]>([]);
   private logs = signal<Log[]>([]);
   private emailByUserId = signal<Record<string, string>>({});
 
-  /** Persisted per-widget geometry (x/y/cols/rows), merged over the defaults below. */
   savedLayout = signal<Partial<Record<WidgetId, SavedGeometry>>>(this.loadLayout());
 
   ringBars = computed(() => this.toBars(
@@ -79,11 +85,12 @@ export class DashboardComponent implements OnInit {
     return defaults.map((w) => ({ ...w, ...this.savedLayout()[w.id] }));
   });
 
+  // Badge variants (darker fills) so white text passes WCAG AA.
   ringColors: Record<string, string> = {
-    Assess: 'bg-ring-assess',
-    Trial: 'bg-ring-trial',
-    Adopt: 'bg-ring-adopt',
-    Hold: 'bg-ring-hold',
+    Assess: 'bg-ring-assess-badge',
+    Trial: 'bg-ring-trial-badge',
+    Adopt: 'bg-ring-adopt-badge',
+    Hold: 'bg-ring-hold-badge',
   };
 
   options: GridsterConfig = {
@@ -145,12 +152,17 @@ export class DashboardComponent implements OnInit {
     const geometry: SavedGeometry = { x: item.x, y: item.y, cols: item.cols, rows: item.rows };
     const layout = { ...this.savedLayout(), [item['id']]: geometry };
     this.savedLayout.set(layout);
-    localStorage.setItem(DashboardComponent.STORAGE_KEY, JSON.stringify(layout));
+    const stored: SavedLayout = { version: DashboardComponent.LAYOUT_VERSION, items: layout };
+    localStorage.setItem(DashboardComponent.STORAGE_KEY, JSON.stringify(stored));
   }
 
   private loadLayout(): Partial<Record<WidgetId, SavedGeometry>> {
     try {
-      return JSON.parse(localStorage.getItem(DashboardComponent.STORAGE_KEY) ?? '{}');
+      const stored = JSON.parse(localStorage.getItem(DashboardComponent.STORAGE_KEY) ?? 'null') as SavedLayout | null;
+      if (stored !== null && stored.version === DashboardComponent.LAYOUT_VERSION) {
+        return stored.items ?? {};
+      }
+      return {};
     } catch {
       return {};
     }

@@ -1,7 +1,7 @@
 <div class="max-w-5xl mx-auto p-6">
   <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Technologies</h1>
   @if (errorMessages().length > 0) {
-    <div class="error-summary bg-danger-soft border border-danger/30 text-danger px-4 py-3 rounded relative">
+    <div class="error-summary bg-danger-soft border border-danger/30 text-danger-dark px-4 py-3 rounded relative">
       <strong class="font-bold">Errors:</strong>
       <ul class="mt-2">
         @for (error of errorMessages(); track error) {
@@ -10,33 +10,33 @@
       </ul>
     </div>
   }
-  <form [formGroup]="technologyForm" (submit)="saveTechnology()" class="bg-gray-100 p-6 rounded-lg shadow-md">
+  <form [formGroup]="technologyForm" (submit)="saveTechnology()" class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm">
     <h2 class="text-xl font-semibold mb-4">{{ isEditing() ? 'Edit Technology' : 'Create New Technology' }}</h2>
 
-    <label class="block text-gray-700 font-medium">Name</label>
-    <input type="text" formControlName="name" required class="input-field" />
+    <label class="block text-gray-700 font-medium" for="tech-name">Name</label>
+    <input id="tech-name" type="text" formControlName="name" required class="input-field" />
 
-    <label class="block text-gray-700 font-medium mt-4">Category</label>
-    <select formControlName="category" class="input-field">
+    <label class="block text-gray-700 font-medium mt-4" for="tech-category">Category</label>
+    <select id="tech-category" formControlName="category" class="input-field">
       <option value="Techniques">Techniques</option>
       <option value="Tools">Tools</option>
       <option value="Platforms">Platforms</option>
       <option value="Languages & Frameworks">Languages & Frameworks</option>
     </select>
 
-    <label class="block text-gray-700 font-medium mt-4">Ring</label>
-    <select formControlName="ring" class="input-field">
+    <label class="block text-gray-700 font-medium mt-4" for="tech-ring">Ring</label>
+    <select id="tech-ring" formControlName="ring" class="input-field">
       <option value="Assess">Assess</option>
       <option value="Trial">Trial</option>
       <option value="Adopt">Adopt</option>
       <option value="Hold">Hold</option>
     </select>
 
-    <label class="block text-gray-700 font-medium mt-4">Technology Description</label>
-    <textarea formControlName="description" required class="input-field"></textarea>
+    <label class="block text-gray-700 font-medium mt-4" for="tech-description">Technology Description</label>
+    <textarea id="tech-description" formControlName="description" required class="input-field"></textarea>
 
-    <label class="block text-gray-700 font-medium mt-4">Reason for Ring Placement</label>
-    <textarea formControlName="ringReason" required class="input-field"></textarea>
+    <label class="block text-gray-700 font-medium mt-4" for="tech-ring-reason">Reason for Ring Placement</label>
+    <textarea id="tech-ring-reason" formControlName="ringReason" required class="input-field"></textarea>
 
     <div class="mt-4">
       <button type="submit" class="btn-primary">{{ isEditing() ? 'Update' : 'Create' }}</button>

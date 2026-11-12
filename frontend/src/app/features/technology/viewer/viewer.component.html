@@ -4,8 +4,8 @@
   <div class="flex flex-wrap gap-2 mb-8 justify-center">
     <button
       class="px-4 py-1.5 rounded-full text-sm border border-gray-300 transition-colors duration-200 active:scale-95"
-      [class.bg-primary-muted]="selectedCategory() === 'All'"
-      [class.border-primary-muted]="selectedCategory() === 'All'"
+      [class.bg-primary-600]="selectedCategory() === 'All'"
+      [class.border-primary-600]="selectedCategory() === 'All'"
       [class.text-white]="selectedCategory() === 'All'"
       (click)="selectedCategory.set('All')">
       All
@@ -13,8 +13,8 @@
     @for (name of categoryNames(); track name) {
       <button
         class="px-4 py-1.5 rounded-full text-sm border border-gray-300 transition-colors duration-200 active:scale-95"
-        [class.bg-primary-muted]="selectedCategory() === name"
-        [class.border-primary-muted]="selectedCategory() === name"
+        [class.bg-primary-600]="selectedCategory() === name"
+        [class.border-primary-600]="selectedCategory() === name"
         [class.text-white]="selectedCategory() === name"
         (click)="selectedCategory.set(name)">
         {{ name }}

@@ -10,8 +10,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes), 
     provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
-    // Kendo components that use animations (e.g. the grid pager's ActionSheet)
-    // require Angular's animation infrastructure, even in standalone apps.
+    // Kendo components that use animations (e.g. the grid pager) require this
     provideAnimations()
   ],
 };

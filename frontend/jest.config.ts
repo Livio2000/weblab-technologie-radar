@@ -6,7 +6,6 @@ import { createCjsPreset } from 'jest-preset-angular/presets/index.js';
 export default {
   ...createCjsPreset(),
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
-  // Coverage: only app source, not spec/env/entry files.
   collectCoverageFrom: [
     'src/app/**/*.ts',
     '!src/main.ts',
@@ -17,9 +16,7 @@ export default {
     '!src/**/*.model.ts',
   ],
   coverageReporters: ['text-summary', 'html', 'lcov'],
-  // Measured after the first 8 spec suites (~42% statements). Sits slightly
-  // below the real number so refactors don't break CI, but any NET loss of
-  // coverage now fails the pipeline. Ratchet up as more specs are added.
+  // floor sits below the measured coverage so refactors don't break CI — ratchet up as specs grow
   coverageThreshold: {
     global: {
       statements: 40,

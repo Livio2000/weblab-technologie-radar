@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { HttpErrorResponse } from '@angular/common/http';
 import { TechnologyService } from '../technology.service';
 import { LogService } from '../../log/log.service';
 import { Technology } from '../technology.model';
@@ -68,8 +69,12 @@ export class AdministrationComponent implements OnInit {
     }
   }
 
-  private handleApiError(error: any): void {
-    if (error.status === 400 && Array.isArray(error.error.message)) {
+  private handleApiError(error: unknown): void {
+    if (
+      error instanceof HttpErrorResponse &&
+      error.status === 400 &&
+      Array.isArray(error.error.message)
+    ) {
       this.errorMessages.set(error.error.message.flatMap((err: { constraints: string[] }) => err.constraints));
     } else {
       this.errorMessages.set(['An unexpected error occurred.']);

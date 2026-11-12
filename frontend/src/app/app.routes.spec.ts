@@ -5,15 +5,8 @@ import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { UserService } from './features/user/user.service';
 import { LogService } from './features/log/log.service';
+import { TechnologyService } from './features/technology/technology.service';
 
-/**
- * Router-level integration tests for the guard wiring in app.routes.ts.
- *
- * The real `routes` are used, so this verifies WHICH guard sits on WHICH
- * route. The guards' dependencies (AuthService) are spied; the services the
- * protected components would call are stubbed with empty observables so no
- * HTTP backend is needed at all.
- */
 describe('app.routes (guard behavior)', () => {
   let router: Router;
 
@@ -29,9 +22,10 @@ describe('app.routes (guard behavior)', () => {
       providers: [
         provideRouter(routes),
         { provide: AuthService, useValue: authServiceSpy },
-        // Stub the data layer: the guard test is about routing, not data.
+        // TechnologyService stub: the non-admin redirect to '/' instantiates ViewerComponent
         { provide: UserService, useValue: { getUsers: () => of([]) } },
         { provide: LogService, useValue: { getRecentLogs: () => of([]) } },
+        { provide: TechnologyService, useValue: { getTechnologies: () => of([]) } },
       ],
     });
 
@@ -41,8 +35,7 @@ describe('app.routes (guard behavior)', () => {
     authServiceSpy.isAuthenticated.mockReturnValue(true);
     authServiceSpy.isAdmin.mockReturnValue(false);
 
-    // Park on an unguarded route first: navigating to '/' while already at
-    // '/' would short-circuit before any guard runs.
+    // start at /login so navigating to '/' actually runs the guards
     await router.navigateByUrl('/login');
   });
 
@@ -55,13 +48,13 @@ describe('app.routes (guard behavior)', () => {
     expect(router.url).toBe('/login');
   });
 
-  it('blocks an authenticated non-admin from /users and logs them out', async () => {
+  it('redirects an authenticated non-admin away from /users without logging out', async () => {
     await router.navigateByUrl('/users');
 
     expect(authServiceSpy.isAuthenticated).toHaveBeenCalled();
     expect(authServiceSpy.isAdmin).toHaveBeenCalled();
-    expect(authServiceSpy.logout).toHaveBeenCalled();
-    expect(router.url).toBe('/login');
+    expect(authServiceSpy.logout).not.toHaveBeenCalled();
+    expect(router.url).toBe('/');
   });
 
   it('allows an admin through to /users', async () => {

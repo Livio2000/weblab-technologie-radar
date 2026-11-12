@@ -1,15 +1,15 @@
-<div class="max-w-md mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
+<div class="max-w-md mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
   <h2 class="text-2xl font-semibold text-center mb-4">Login</h2>
 
   <form (submit)="login()" class="space-y-4">
     <div>
-      <label class="block text-gray-700">Email</label>
-      <input type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required class="input-field" />
+      <label class="block text-gray-700" for="login-email">Email</label>
+      <input id="login-email" type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required class="input-field" />
     </div>
 
     <div>
-      <label class="block text-gray-700">Password</label>
-      <input type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required class="input-field" />
+      <label class="block text-gray-700" for="login-password">Password</label>
+      <input id="login-password" type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required class="input-field" />
     </div>
 
     @if (errorMessage()) {

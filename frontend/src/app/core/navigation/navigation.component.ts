@@ -1,5 +1,4 @@
-
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -12,9 +11,8 @@ import { AuthService } from '../auth/auth.service';
 })
 
 export class NavigationComponent {
+  private authService = inject(AuthService);
   menuOpen = signal(false);
-
-  constructor(public authService: AuthService) {}
 
   toggleMenu(): void {
     this.menuOpen.update((state) => !state);

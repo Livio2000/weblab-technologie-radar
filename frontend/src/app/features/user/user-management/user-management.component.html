@@ -2,7 +2,7 @@
   <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Users</h1>
   <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ isEditing() ? 'Edit User' : 'Add New User' }}</h2>
   @if (errorMessages().length > 0) {
-    <div class="error-summary bg-danger-soft border border-danger/30 text-danger px-4 py-3 rounded relative mb-4">
+    <div class="error-summary bg-danger-soft border border-danger/30 text-danger-dark px-4 py-3 rounded relative mb-4">
       <strong class="font-bold">Errors:</strong>
       <ul class="mt-2">
         @for (error of errorMessages(); track error) {
@@ -11,21 +11,21 @@
       </ul>
     </div>
   }
-  <form [formGroup]="userForm" (submit)="saveUser()" class="bg-gray-100 p-6 rounded-lg shadow-md">
-    <label class="block text-gray-700 font-medium">First Name</label>
-    <input type="text" formControlName="firstName" required class="input-field" />
+  <form [formGroup]="userForm" (submit)="saveUser()" class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm">
+    <label class="block text-gray-700 font-medium" for="user-first-name">First Name</label>
+    <input id="user-first-name" type="text" formControlName="firstName" required class="input-field" />
 
-    <label class="block text-gray-700 font-medium mt-4">Last Name</label>
-    <input type="text" formControlName="lastName" required class="input-field" />
+    <label class="block text-gray-700 font-medium mt-4" for="user-last-name">Last Name</label>
+    <input id="user-last-name" type="text" formControlName="lastName" required class="input-field" />
 
-    <label class="block text-gray-700 font-medium mt-4">Email</label>
-    <input type="email" formControlName="email" required class="input-field" />
+    <label class="block text-gray-700 font-medium mt-4" for="user-email">Email</label>
+    <input id="user-email" type="email" formControlName="email" required class="input-field" />
 
-    <label class="block text-gray-700 font-medium mt-4">Password</label>
-    <input type="password" formControlName="password" class="input-field" placeholder="Leave blank to keep existing password" />
+    <label class="block text-gray-700 font-medium mt-4" for="user-password">Password</label>
+    <input id="user-password" type="password" formControlName="password" class="input-field" placeholder="Leave blank to keep existing password" />
 
-    <label class="block text-gray-700 font-medium mt-4">Role</label>
-    <select formControlName="role" class="input-field">
+    <label class="block text-gray-700 font-medium mt-4" for="user-role">Role</label>
+    <select id="user-role" formControlName="role" class="input-field">
       <option value="Administrator">Administrator</option>
       <option value="Employee">Employee</option>
     </select>
